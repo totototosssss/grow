@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const MAX_DAYS = 15;
     const INITIAL_STATE = {
         day: 1,
-        knowledge: 3, stress: 20, energy: 60, money: 600,
+        knowledge: 5, stress: 20, energy: 100, money: 500,
         focus: 20, mental: 30, luck: 5,
         shiroImage: 'shiro.png',
         shiroHappyImage: 'shiro_happy.png',
@@ -136,17 +136,17 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         'best_exercise_book': {
             name: 'Sランク過去問集', price: 7500, type: 'permanent',
-            description: '所有中、「演習をする」際の法律知識獲得量が常に20%上昇し、集中力消費が10%軽減。',
-            permanentEffect: { exerciseKnowledgeBoost: 0.20, exerciseFocusSave: 0.10 }
+            description: '所有中、「演習をする」際の法律知識獲得量が常に45%上昇し、集中力消費が20%軽減。',
+            permanentEffect: { exerciseKnowledgeBoost: 0.45, exerciseFocusSave: 0.20 }
         },
         'intensive_lecture_ticket': {
             name: '短期集中講座受講証', price: 3000, type: 'consumable_active',
-            description: '使用: 法律知識+9、集中力+15、精神力+12。ストレス+10。次回「基本書を読む」または「演習をする」の効率1.4倍(1日限定)。',
+            description: '使用: 法律知識+15、集中力+20、精神力+14。ストレス+8。次回「基本書を読む」または「演習をする」の効率1.7倍(1日限定)。',
             use: (gameState, logHelper) => {
-                gameState.knowledge += 9; logHelper.add(`法律知識が${formatChange(9)}。`);
-                gameState.focus += 15; logHelper.add(`集中力が${formatChange(15)}。`);
-                gameState.mental += 12; logHelper.add(`精神力が${formatChange(12)}。`);
-                gameState.stress += 10; logHelper.add(`講座の負荷でストレスが${formatChange(10, "negative")}。`);
+                gameState.knowledge += 15; logHelper.add(`法律知識が${formatChange(15)}。`);
+                gameState.focus += 20; logHelper.add(`集中力が${formatChange(20)}。`);
+                gameState.mental += 14; logHelper.add(`精神力が${formatChange(14)}。`);
+                gameState.stress += 8; logHelper.add(`講座の負荷でストレスが${formatChange(8, "negative")}。`);
                 const boostTarget = Math.random() < 0.5 ? 'studyTextbookBoost' : 'studyExerciseBoost';
                 const targetName = boostTarget === 'studyTextbookBoost' ? '基本書研究' : '演習';
                 gameState.activeEffects[boostTarget] = { duration: 2, value: 1.4, displayName: `集中講座(${targetName})` };
@@ -586,7 +586,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function studyTextbook() {
         gameState.studyActionCount++;
         LogHelper.add("<strong><i class='fas fa-book-open'></i> 基本書を読み込み、必死に知識を詰め込んだ。</strong>");
-        let knowledgeGainBase = getRandom(3, 4); 
+        let knowledgeGainBase = getRandom(3, 7); 
         
         let knowledgeMultiplier = 1.0;
         if (gameState.activeEffects.studyTextbookBoost && gameState.activeEffects.studyTextbookBoost.duration > 0) {
@@ -620,7 +620,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function doExercise(){
         gameState.studyActionCount++;
         LogHelper.add("<strong><i class='fas fa-pencil-ruler'></i> 過去問・演習書と格闘した。</strong>");
-        let knowledgeGainBase = getRandom(2, 5); 
+        let knowledgeGainBase = getRandom(2, 8); 
         
         let knowledgeMultiplier = 1.0;
         if (gameState.permanentBuffs.exerciseKnowledgeBoost) {
@@ -654,13 +654,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function work() {
         LogHelper.add("<strong><i class='fas fa-briefcase'></i> 生活費のため、短期バイトに励んだ。</strong>");
-        if (gameState.energy < 45) {
+        if (gameState.energy < 40) {
             LogHelper.add(formatMessage("疲労が酷く、ほとんど仕事にならなかった…。", "negative"));
             showThought("体が…重い…", 1800, 'failure');
-            gameState.money += getRandomInt(150, 350);
-            gameState.energy -= getRandomInt(38, 48);
+            gameState.money += getRandomInt(200, 500);
+            gameState.energy -= getRandomInt(25, 40);
         } else {
-            let earningsBase = getRandom(800, 1500);
+            let earningsBase = getRandom(800, 2200);
             let earnings = calculateChange(earningsBase, [{paramState: gameState.focus, value:0.03}]);
             earnings = Math.round(earnings);
 
@@ -669,8 +669,8 @@ document.addEventListener('DOMContentLoaded', () => {
             showThought("これで少しはマシになるか…。", 1800, 'neutral');
         }
         gameState.energy -= Math.round(calculateChange(55, [], [], 1.0, true));
-        gameState.stress += getRandomInt(14, 24);
-        gameState.focus -= getRandomInt(12,18);
+        gameState.stress += getRandomInt(10, 24);
+        gameState.focus -= getRandomInt(9,18);
         gameState.mental -= getRandomInt(2,4);
     }
     
@@ -703,7 +703,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         gameState.energy -= getRandomInt(6,14);
 
-        if (Math.random() < 0.5) {
+        if (Math.random() < 0.4) {
             let stressRelief = getRandom(30, 50);
             gameState.stress -= Math.round(stressRelief);
             let mentalBoost = getRandomInt(6, 12);
@@ -767,7 +767,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function sleep() {
         LogHelper.add("<strong><i class='fas fa-bed'></i> 翌日のために、質の高い睡眠を心がけた。</strong>");
-        let energyGainBase = getRandom(28, 60);
+        let energyGainBase = getRandom(38, 70);
         let energyGain = calculateChange(energyGainBase, [{paramState: (100-gameState.stress), value: 0.12}], [{paramState: gameState.stress, value: 0.55}]);
         
         let stressReliefBase = getRandom(6, 16);
