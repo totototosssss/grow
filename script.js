@@ -21,10 +21,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const ITEMS = {
         'energy_drink_law': {
             name: '法力エナジードリンク改', price: 600, type: 'consumable_active',
-            description: '使用: 体力+30、集中力+20。ただしストレス+8。',
+            description: '使用: 体力+25、集中力+18。ただしストレス+8。',
             use: (gameState, logHelper) => {
-                gameState.energy += 30; logHelper.add(`体力が${formatChange(30)}。`);
-                gameState.focus += 20; logHelper.add(`集中力が${formatChange(20)}。`);
+                gameState.energy += 25; logHelper.add(`体力が${formatChange(25)}。`);
+                gameState.focus += 18; logHelper.add(`集中力が${formatChange(18)}。`);
                 gameState.stress += 8; logHelper.add(`代償としてストレスが${formatChange(8, "negative")}。`);
                 return true;
             }
