@@ -785,6 +785,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function endDay() {
+        gameState.omikujiUsedToday = false;
         const currentDay = gameState.day;
         gameState.day++;
         LogHelper.clear();
@@ -965,11 +966,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function resetGame() {
-        gameState = JSON.parse(JSON.stringify(INITIAL_STATE)); // Deep copy
-        gameState.insultOnlineCount = 0; // Ensure counters are reset
+        gameState = JSON.parse(JSON.stringify(INITIAL_STATE)); 
+        gameState.insultOnlineCount = 0;
         gameState.pachinkoCount = 0;
-        gameState.soaplandUsedCount = 0; // <--- 追加
+        gameState.soaplandUsedCount = 0; 
         gameState.studyActionCount = 0;
+        gameState.omikujiUsedToday = false;
         shiroImageElem.src = gameState.shiroImage;
         eventNotificationArea.style.display = 'none';
         examResultModal.classList.remove('show');
