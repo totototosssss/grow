@@ -12,17 +12,19 @@ document.addEventListener('DOMContentLoaded', () => {
         permanentBuffs: {},
         activeEffects: {},
         insultOnlineCount: 0,
-        pachinkoCount: 0
+        pachinkoCount: 0,
+        soaplandUsedCount: 0,
+        studyActionCount: 0 
     };
 
     const ITEMS = {
         'energy_drink_law': {
             name: '法力エナジードリンク改', price: 750, type: 'consumable_active',
-            description: '使用: 体力+30、集中力+15。ただしストレス+8。',
+            description: '使用: 体力+30、集中力+15。ただし勉強ストレス+8。',
             use: (gameState, logHelper) => {
                 gameState.energy += 22; logHelper.add(`体力が${formatChange(30)}。`);
                 gameState.focus += 10; logHelper.add(`集中力が${formatChange(15)}。`);
-                gameState.stress += 12; logHelper.add(`代償としてストレスが${formatChange(8, "negative")}。`);
+                gameState.stress += 12; logHelper.add(`代償として勉強ストレスが${formatChange(8, "negative")}。`);
                 return true;
             }
         },
@@ -30,12 +32,13 @@ document.addEventListener('DOMContentLoaded', () => {
             name: '行きつけのソープ',
             price: 65000,
             type: 'consumable_active',
-            description: '究極の癒やし。使用するとストレスが0になり、集中力が最大まで回復する。人生を賭ける価値はあるか…？活動資金もごっそり減る。',
+            description: '究極の癒やし。使用すると勉強ストレスが0になり、集中力が最大まで回復する。人生を賭ける価値はあるか…？活動資金もごっそり減る。',
             use: (gameState, logHelper) => {
                 gameState.stress = 0;
                 logHelper.add(`勉強ストレスが完全に消え去った…！`); // formatChange(0)だと表示が微妙なので直接メッセージ
                 gameState.focus = 100; // 集中力の最大値を100と仮定 (clamp関数で100に丸められます)
                 logHelper.add(`集中力が最大までみなぎってきた！`);
+                gameState.soaplandUsedCount++;
 
                 // 暗黙のコストとして、運や精神力が少し下がるなどのペナルティも考えられますが、
                 // 今回は指示された効果のみを実装します。
@@ -43,8 +46,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 // 例: gameState.mental -= 15;
                 // LogHelper.add(`しかし、何か大切なものを失った気がする…。`);
 
-                gameState.money -= 10000; // 例：追加料金
-                LogHelper.add(`最高級のサービスには追加料金が必要だった…。活動資金がさらに減少。`);
+                // 高価なサービスなので、お金が追加で減る演出もアリです（今回は価格に含めています）
+                // gameState.money -= 10000; // 例：追加料金
+                // LogHelper.add(`最高級のサービスには追加料金が必要だった…。活動資金がさらに減少。`);
 
 
                 showThought("全てを忘れてリフレッシュした…！", 2500, 'success'); // 専用の感想
@@ -58,12 +62,12 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         'intensive_lecture_ticket': {
             name: '短期集中講座受講証', price: 3000, type: 'consumable_active',
-            description: '使用: 法律知識+6、集中力+12、精神力+10。ストレス+20。次回「基本書を読む」または「演習をする」の効率1.15倍(1日限定)。',
+            description: '使用: 法律知識+6、集中力+12、精神力+10。勉強ストレス+20。次回「基本書を読む」または「演習をする」の効率1.15倍(1日限定)。',
             use: (gameState, logHelper) => {
                 gameState.knowledge += 6; logHelper.add(`法律知識が${formatChange(6)}。`);
                 gameState.focus += 12; logHelper.add(`集中力が${formatChange(12)}。`);
                 gameState.mental += 10; logHelper.add(`精神力が${formatChange(10)}。`);
-                gameState.stress += 20; logHelper.add(`講座の負荷でストレスが${formatChange(20, "negative")}。`);
+                gameState.stress += 20; logHelper.add(`講座の負荷で勉強ストレスが${formatChange(20, "negative")}。`);
                 const boostTarget = Math.random() < 0.5 ? 'studyTextbookBoost' : 'studyExerciseBoost';
                 const targetName = boostTarget === 'studyTextbookBoost' ? '基本書研究' : '演習';
                 gameState.activeEffects[boostTarget] = { duration: 2, value: 1.15, displayName: `集中講座(${targetName})` };
@@ -490,6 +494,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function studyTextbook() {
+        gameState.studyActionCount++;
         LogHelper.add("<strong><i class='fas fa-book-open'></i> 基本書を読み込み、必死に知識を詰め込んだ。</strong>");
         let knowledgeGainBase = getRandom(3, 4); 
         
@@ -523,6 +528,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     function doExercise(){
+        gameState.studyActionCount++;
         LogHelper.add("<strong><i class='fas fa-pencil-ruler'></i> 過去問・演習書と格闘した。</strong>");
         let knowledgeGainBase = getRandom(2, 5); 
         
@@ -786,26 +792,36 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 fictionNoticeElem.innerHTML = `―――だが、これはあくまでゲームの中のしろちゃんの輝かしい未来。<br>現実世界のしろちゃんは、この瞬間も自室のベッドの上で<br>「もう何もしたくない…」と呟きながら、怠惰な時間を満喫しているのであった…！<br>めでたし、めでたし？`;
                 fictionEndingElem.style.display = 'block';
-            } else {
-                if (gameState.insultOnlineCount >= MAX_DAYS/5) {
+            } else { // 不合格だった場合の処理
+                fictionEndingElem.style.display = 'none'; // まずフィクション演出を非表示に
+                examResultTitle.style.color = 'var(--danger-color)'; // 不合格なので赤文字に設定
+
+                if (gameState.soaplandUsedCount > 0) { // 性病エンド (最優先)
+                    resultTitleText = "予備試験 不合格…そして絶望の診断";
+                    resultMessageText = `<strong>予備試験に落ちた上、あの時の刹那的な快楽が仇となったのか、体に深刻な異変が…。</strong><br>震える手で開いた診断結果は無情にも性病を告げていた。治療には莫大な費用と時間がかかり、勉強どころではなくなってしまった。人生とは、あまりにも皮肉だ。`;
+                    examShiroImageElem.src = gameState.shiroSadImage || INITIAL_STATE.shiroImage;
+                } else if (gameState.insultOnlineCount >= MAX_DAYS / 5) { // 逮捕エンド
                     resultTitleText = "予備試験 不合格…そして逮捕";
                     resultMessageText = `<strong>予備試験にも落ち、度重なるネットでの誹謗中傷が仇となった…。</strong><br>ある日、玄関のチャイムが鳴り、ドアを開けるとそこには警察官が立っていた。<br>「しろちゃん、ちょっと署まで来てもらおうか」…人生、詰んだ。`;
-                    examShiroImageElem.src = gameState.shiroSadImage || INITIAL_STATE.shiroImage; // Or a specific "arrested" image
-                } else if (gameState.pachinkoCount >= MAX_DAYS/5) {
-                     resultTitleText = "予備試験 不合格…そして借金地獄";
-                     resultMessageText = `<strong>予備試験にも落ち、パチンコで作った借金は雪だるま式に膨れ上がった。</strong><br>取り立ての電話は鳴り止まず、もはやまともな生活は送れない。<br>しろちゃんは自殺してしまった。`;
-                     examShiroImageElem.src = gameState.shiroSadImage || INITIAL_STATE.shiroImage; // Or a specific "bankrupt" image
-                } else {
+                    examShiroImageElem.src = gameState.shiroSadImage || INITIAL_STATE.shiroImage;
+                } else if (gameState.pachinkoCount >= MAX_DAYS / 5) { // 借金地獄エンド
+                    resultTitleText = "予備試験 不合格…そして借金地獄";
+                    resultMessageText = `<strong>予備試験にも落ち、パチンコで作った借金は雪だるま式に膨れ上がった。</strong><br>取り立ての電話は鳴り止まず、もはやまともな生活は送れない。<br>しろちゃんの人生は、ギャンブルによって完全に破綻した…。`;
+                    examShiroImageElem.src = gameState.shiroSadImage || INITIAL_STATE.shiroImage;
+                } else if (gameState.studyActionCount >= 9) { // 地頭お疲れエンド
+                    resultTitleText = "予備試験 不合格…努力の果てに";
+                    resultMessageText = `<strong>予備試験不合格。あれだけ勉強したのに、結果は非情だった…。</strong><br>もしかしたら、自分には根本的にこの道は向いていなかったのかもしれない。努力だけでは越えられない壁を痛感し、しろちゃんは静かにペンを置いた。`;
+                    examShiroImageElem.src = gameState.shiroSadImage || INITIAL_STATE.shiroImage;
+                } else { // 上記いずれにも該当しない通常の不合格
                     resultTitleText = "予備試験 不合格…";
                     if (internalScore < passThreshold * 0.6) {
-                         resultMessageText = `<strong>残念ながら、夢は完全に潰えました…。</strong><br>あまりにも厳しい現実は、無情にもしろちゃんを打ちのめしました。この絶望から立ち直ることはできるのでしょうか…。`;
+                        resultMessageText = `<strong>残念ながら、夢は完全に潰えました…。</strong><br>あまりにも厳しい現実は、無情にもしろちゃんを打ちのめしました。この絶望から立ち直ることはできるのでしょうか…。`;
                     } else if (internalScore < passThreshold * 0.88) {
                         resultMessageText = `<strong>あと一歩、本当にあと一歩でしたが、不合格です。</strong><br>これ以上ないほど悔しい結果です。しかし、この壮絶な挑戦で何かを掴んだと信じたい…。`;
                     } else {
                         resultMessageText = `<strong>本当に、本当に、あと僅かの差で不合格となりました…。</strong><br>天はしろちゃんに味方しませんでした。合格の光は、指の間からこぼれ落ちてしまいました。`;
                     }
                 }
-                fictionEndingElem.style.display = 'none';
             }
 
             examResultTitle.textContent = resultTitleText;
@@ -860,6 +876,8 @@ document.addEventListener('DOMContentLoaded', () => {
         gameState = JSON.parse(JSON.stringify(INITIAL_STATE)); // Deep copy
         gameState.insultOnlineCount = 0; // Ensure counters are reset
         gameState.pachinkoCount = 0;
+        gameState.soaplandUsedCount = 0; // <--- 追加
+        gameState.studyActionCount = 0;
         shiroImageElem.src = gameState.shiroImage;
         eventNotificationArea.style.display = 'none';
         examResultModal.classList.remove('show');
