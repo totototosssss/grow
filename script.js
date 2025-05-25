@@ -658,7 +658,7 @@ document.addEventListener('DOMContentLoaded', () => {
             winChance = clamp(winChance, 0.01, 0.30);
 
             if (Math.random() < winChance) {
-                const winningsMultiplier = getRandom(1.3, 2.1);
+                const winningsMultiplier = getRandom(1.0,6.0)+getRandom(1.0,6.0);
                 const winnings = Math.round(cost * winningsMultiplier);
                 gameState.money += winnings;
                 LogHelper.add(`信じられない幸運！ ${formatMessage("+" + winnings, "positive")}円獲得！`);
