@@ -2,105 +2,117 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>しろちゃん育成ゲーム Abyss</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>しろちゃん育成チャレンジ</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Yuji+Syuku&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <link rel="apple-touch-icon" href="shiro_icon.png">
 </head>
 <body>
-    <div id="crt-filter"></div>
+    <div id="app-background"></div>
     <div class="game-wrapper">
-        <div class="top-bar">
-            <h1 class="game-title">しろちゃん育成 <span class="abyss-title">Abyss</span></h1>
-            <div class="day-counter">
-                <i class="fas fa-calendar-day"></i> <span id="day-display">1</span>日目 / 15日
+        <header class="game-header">
+            <h1 class="game-title">しろちゃん育成チャレンジ <span class="extreme-title">Exam Edition</span></h1>
+            <div class="header-info-wrapper">
+                <div class="header-info">
+                    <div class="day-counter">
+                        <i class="fas fa-calendar-alt"></i> <span id="day-display">1</span>日目 / 15日
+                    </div>
+                    <div class="money-display-header">
+                        <i class="fas fa-wallet"></i> 所持金: <span id="money-display-header-value">600</span>円
+                    </div>
+                </div>
+                <button id="open-shop-button" class="shop-button"><i class="fas fa-shopping-bag"></i> アイテム</button>
             </div>
-            <button id="open-shop-button" class="shop-button pulse"><i class="fas fa-store-alt"></i> 魔導具店</button>
+        </header>
+
+        <div class="event-notification-area" id="event-notification" style="display: none;">
+            <p id="event-message"></p>
         </div>
 
         <div class="container">
-            <main>
-                <div class="shiro-status-card">
+            <main class="game-main">
+                <section class="status-section">
                     <div class="shiro-image-wrapper">
                         <div class="shiro-image-container">
                             <img src="shiro.png" alt="しろちゃん" id="shiro-image">
                         </div>
                         <div id="shiro-thought-bubble" class="thought-bubble" style="display: none;">...</div>
                     </div>
-                    <div class="parameters">
-                        <h2><i class="fas fa-user-secret"></i> 魂の写し鏡</h2>
+                    <div class="parameters-container">
+                        <h2><i class="fas fa-user-cog"></i> 現在の状況</h2>
                         <div class="param-grid">
-                            <p data-param="knowledge"><i class="fas fa-brain"></i>叡智: <span id="knowledge-display">5</span></p>
-                            <p data-param="stress"><i class="fas fa-ghost"></i>業苦: <span id="stress-display">30</span></p>
-                            <p data-param="energy"><i class="fas fa-heart-pulse"></i>生命力: <span id="energy-display">60</span></p>
-                            <p data-param="money"><i class="fas fa-gem"></i>魂の欠片: <span id="money-display">700</span></p>
-                            <p data-param="focus"><i class="fas fa-eye"></i>集中: <span id="focus-display">25</span></p>
-                            <p data-param="mental"><i class="fas fa-shield-halved"></i>精神防壁: <span id="mental-display">35</span></p>
-                            <p data-param="luck"><i class="fas fa-dice-d6"></i>星の導き: <span id="luck-display">15</span></p>
-                            <p data-param="rhythm"><i class="fas fa-yin-yang"></i>魂の調律: <span id="rhythm-display">25</span></p>
+                            <p data-param="knowledge"><i class="fas fa-book"></i>知識: <span id="knowledge-display">3</span></p>
+                            <p data-param="stress"><i class="fas fa-bolt-lightning"></i>ストレス: <span id="stress-display">25</span></p>
+                            <p data-param="energy"><i class="fas fa-battery-half"></i>体力: <span id="energy-display">50</span></p>
+                            <p data-param="focus"><i class="fas fa-crosshairs"></i>集中力: <span id="focus-display">15</span></p>
+                            <p data-param="mental"><i class="fas fa-brain"></i>メンタル: <span id="mental-display">25</span></p>
+                            <p data-param="luck"><i class="fas fa-dice-d6"></i>運: <span id="luck-display">5</span></p>
+                            <p data-param="rhythm"><i class="fas fa-yin-yang"></i>生活リズム: <span id="rhythm-display">15</span></p>
                         </div>
                         <div class="inventory-display">
-                            <h3><i class="fas fa-magic"></i> 所持秘宝</h3>
+                            <h3><i class="fas fa-box-open"></i> 所持アイテム</h3>
                             <ul id="inventory-list">
-                                <li class="no-items">虚無</li>
+                                <li class="no-items">なし</li>
                             </ul>
                         </div>
                     </div>
-                </div>
+                </section>
 
-                <div class="actions-card">
-                    <h2><i class="fas
-                        fa-scroll-old"></i> 今日の選択</h2>
-                    <div class="action-buttons-grid">
-                        <button data-action="study"><i class="fas fa-book-dead"></i> 古文書を解読</button>
-                        <button data-action="work"><i class="fas fa-handshake-angle"></i> 魂を売る(バイト)</button>
-                        <button data-action="pachinko"><i class="fas fa-skull-crossbones"></i> 運命の遊戯</button>
-                        <button data-action="play_game"><i class="fas fa-dungeon"></i> 虚無への逃避</button>
-                        <button data-action="insult"><i class="fas fa-comment-slash"></i> 禁断の呪詛</button>
-                        <button data-action="sleep"><i class="fas fa-bed-pulse"></i> 深淵での休息</button>
+                <section class="actions-section">
+                    <h2><i class="fas fa-hand-pointer"></i> 今日の行動を選択</h2>
+                    <div class="action-buttons-list">
+                        <button data-action="study"><i class="fas fa-pencil-alt"></i> 勉強をする</button>
+                        <button data-action="work"><i class="fas fa-cash-register"></i> アルバイト</button>
+                        <button data-action="play_video_games"><i class="fas fa-gamepad"></i> ゲームに時間を使う</button>
+                        <button data-action="insult_online"><i class="fas fa-keyboard"></i> オプチャで人を罵倒</button>
+                        <button data-action="rest"><i class="fas fa-couch"></i> 休憩する</button>
+                        <button data-action="sleep"><i class="fas fa-bed"></i> しっかり寝る</button>
                     </div>
-                </div>
+                </section>
 
-                <div class="message-log-card">
-                    <h2><i class="fas fa-feather-alt"></i> 魂の記録</h2>
+                <section class="log-section">
+                    <h2><i class="fas fa-history"></i> 最近の出来事</h2>
                     <div id="log-message-area">
-                        <p id="log-message">深淵を覗く覚悟はあるか…？ しろちゃんの最も過酷な挑戦が始まる。</p>
+                        <p id="log-message">しろちゃんの過酷な毎日が始まる…。目標達成は絶望的かもしれない。</p>
                     </div>
-                </div>
+                </section>
             </main>
         </div>
 
-        <footer>
-            <p>&copy; 2025 しろちゃん育成プロジェクト Abyss</p>
+        <footer class="game-footer">
+            <p>&copy; 2025 しろちゃん育成チャレンジ実行委員会</p>
         </footer>
     </div>
 
     <div class="modal" id="exam-result-modal">
         <div class="modal-content">
             <span class="close-button" data-modal-id="exam-result-modal">&times;</span>
-            <h2 id="exam-result-title">審判の刻</h2>
+            <h2 id="exam-result-title">最終審判</h2>
             <div id="exam-shiro-image-container" class="modal-shiro-image">
                  <img src="shiro.png" alt="運命のしろちゃん" id="exam-shiro-image">
             </div>
             <div id="exam-calculation-message" style="display:none;">
-                <p>星々が囁き、運命の糸が紡がれる…</p>
+                <p>結果を待っています…</p>
                 <div class="spinner"></div>
             </div>
             <div id="exam-actual-result" style="display:none;">
                 <p id="exam-result-message" class="result-narrative"></p>
-                </div>
-            <button id="restart-game-button">再び深淵へ挑む</button>
+            </div>
+            <button id="restart-game-button">もう一度挑戦する</button>
         </div>
     </div>
 
     <div class="modal" id="item-shop-modal">
         <div class="modal-content">
             <span class="close-button" data-modal-id="item-shop-modal">&times;</span>
-            <h2><i class="fas fa-flask-vial"></i> 魔導具店「黄昏の灯火」</h2>
-            <p>現在の魂の欠片: <span id="shop-money-display">0</span></p>
+            <h2><i class="fas fa-store-alt"></i> アイテムショップ</h2>
+            <p class="shop-current-money">現在の所持金: <span id="shop-money-display">0</span>円</p>
             <div id="item-shop-list" class="item-list">
-                </div>
+            </div>
         </div>
     </div>
 
