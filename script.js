@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const ITEMS = {
         'energy_drink_law': {
             name: '法力エナジードリンク改', price: 750, type: 'consumable_active',
-            description: '使用: 体力+30、集中力+15。ただし勉強ストレス+8。',
+            description: '使用: 体力+30、集中力+15。ただしストレス+8。',
             use: (gameState, logHelper) => {
                 gameState.energy += 22; logHelper.add(`体力が${formatChange(30)}。`);
                 gameState.focus += 10; logHelper.add(`集中力が${formatChange(15)}。`);
@@ -62,15 +62,15 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         'intensive_lecture_ticket': {
             name: '短期集中講座受講証', price: 3000, type: 'consumable_active',
-            description: '使用: 法律知識+9、集中力+15、精神力+12。ストレス+10。次回「基本書を読む」または「演習をする」の効率1.15倍(1日限定)。',
+            description: '使用: 法律知識+9、集中力+15、精神力+12。ストレス+10。次回「基本書を読む」または「演習をする」の効率1.4倍(1日限定)。',
             use: (gameState, logHelper) => {
                 gameState.knowledge += 9; logHelper.add(`法律知識が${formatChange(9)}。`);
                 gameState.focus += 15; logHelper.add(`集中力が${formatChange(15)}。`);
                 gameState.mental += 12; logHelper.add(`精神力が${formatChange(12)}。`);
-                gameState.stress += 15; logHelper.add(`講座の負荷でストレスが${formatChange(10, "negative")}。`);
+                gameState.stress += 10; logHelper.add(`講座の負荷でストレスが${formatChange(10, "negative")}。`);
                 const boostTarget = Math.random() < 0.5 ? 'studyTextbookBoost' : 'studyExerciseBoost';
                 const targetName = boostTarget === 'studyTextbookBoost' ? '基本書研究' : '演習';
-                gameState.activeEffects[boostTarget] = { duration: 2, value: 1.15, displayName: `集中講座(${targetName})` };
+                gameState.activeEffects[boostTarget] = { duration: 2, value: 1.4, displayName: `集中講座(${targetName})` };
                 logHelper.add(formatMessage(`集中講座(${targetName})効果`, "item") + "を得た！");
                 return true;
             }
