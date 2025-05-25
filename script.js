@@ -766,11 +766,11 @@ document.addEventListener('DOMContentLoaded', () => {
             let passed = false;
 
             if (internalScore >= passThreshold) {
-                if (gameState.luck > 90 && gameState.mental > 88 && internalScore > passThreshold * 1.01) {
+                if (gameState.luck > 75 && gameState.mental > 80 && internalScore > passThreshold * 1.01) {
                     passed = true;
                 } else if (internalScore > passThreshold * 1.02 && (gameState.luck > 70 || gameState.mental > 78) && Math.random() < 0.6) {
                     passed = true;
-                } else if (Math.random() < (0.10 + (gameState.luck - 80) / 150 + (gameState.mental - 80)/200) ) {
+                } else if (Math.random() < (0.10 + (gameState.luck - 70) / 150 + (gameState.mental - 70)/200) ) {
                     passed = true;
                 }
             } else {
