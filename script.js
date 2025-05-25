@@ -249,7 +249,7 @@ document.addEventListener('DOMContentLoaded', () => {
             effect: (gs) => { gs.stress += getRandomInt(15,25); gs.focus -= getRandomInt(8,14); gs.mental -=getRandomInt(5,10);}
         }
     ];
-    const RANDOM_EVENT_CHANCE = 0.07;
+    const RANDOM_EVENT_CHANCE = 0.05;
 
     let gameState = JSON.parse(JSON.stringify(INITIAL_STATE));
 
