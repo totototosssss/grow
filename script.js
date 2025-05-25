@@ -26,6 +26,32 @@ document.addEventListener('DOMContentLoaded', () => {
                 return true;
             }
         },
+        'luxury_soapland': {
+            name: '行きつけのソープ',
+            price: 65000,
+            type: 'consumable_active',
+            description: '究極の癒やし。使用すると勉強ストレスが0になり、集中力が最大まで回復する。人生を賭ける価値はあるか…？活動資金もごっそり減る。',
+            use: (gameState, logHelper) => {
+                gameState.stress = 0;
+                logHelper.add(`勉強ストレスが完全に消え去った…！`); // formatChange(0)だと表示が微妙なので直接メッセージ
+                gameState.focus = 100; // 集中力の最大値を100と仮定 (clamp関数で100に丸められます)
+                logHelper.add(`集中力が最大までみなぎってきた！`);
+
+                // 暗黙のコストとして、運や精神力が少し下がるなどのペナルティも考えられますが、
+                // 今回は指示された効果のみを実装します。
+                // 例: gameState.luck -= 10;
+                // 例: gameState.mental -= 15;
+                // LogHelper.add(`しかし、何か大切なものを失った気がする…。`);
+
+                // 高価なサービスなので、お金が追加で減る演出もアリです（今回は価格に含めています）
+                // gameState.money -= 10000; // 例：追加料金
+                // LogHelper.add(`最高級のサービスには追加料金が必要だった…。活動資金がさらに減少。`);
+
+
+                showThought("全てを忘れてリフレッシュした…！", 2500, 'success'); // 専用の感想
+                return true; // 使用成功
+            }
+        },
         'best_exercise_book': {
             name: 'Sランク過去問集', price: 7500, type: 'permanent',
             description: '所有中、「演習をする」際の法律知識獲得量が常に10%上昇し、集中力消費が5%軽減。',
