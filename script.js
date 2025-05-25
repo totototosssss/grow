@@ -117,7 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
             name: '行きつけのソープ',
             price: 65000,
             type: 'consumable_active',
-            description: '究極の癒やし。使用すると勉強ストレスが0になり、集中力が最大まで回復する。人生を賭ける価値はあるか…？活動資金もごっそり減る。',
+            description: '究極の癒やし。使用するとストレスが0になり、集中力が最大まで回復する。人生を賭ける価値はあるか…？活動資金もごっそり減る。',
             use: (gameState, logHelper) => {
                 gameState.stress = 0;
                 logHelper.add(`勉強ストレスが完全に消え去った…！`); 
