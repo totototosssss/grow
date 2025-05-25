@@ -466,7 +466,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function studyTextbook() {
         LogHelper.add("<strong><i class='fas fa-book-open'></i> 基本書を読み込み、必死に知識を詰め込んだ。</strong>");
-        let knowledgeGainBase = getRandom(1, 3); 
+        let knowledgeGainBase = getRandom(3, 4); 
         
         let knowledgeMultiplier = 1.0;
         if (gameState.activeEffects.studyTextbookBoost && gameState.activeEffects.studyTextbookBoost.duration > 0) {
@@ -499,7 +499,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     function doExercise(){
         LogHelper.add("<strong><i class='fas fa-pencil-ruler'></i> 過去問・演習書と格闘した。</strong>");
-        let knowledgeGainBase = getRandom(1, 2); 
+        let knowledgeGainBase = getRandom(2, 5); 
         
         let knowledgeMultiplier = 1.0;
         if (gameState.permanentBuffs.exerciseKnowledgeBoost) {
