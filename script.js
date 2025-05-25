@@ -55,68 +55,58 @@ document.addEventListener('DOMContentLoaded', () => {
             name: "オプチャで大炎上",
             message: "不用意な発言がオプチャで拡散し大炎上！精神的に大ダメージ…もう何もしたくない。",
             effect: (gs) => {
-                gs.knowledge = Math.round(gs.knowledge * 0.7); gs.stress = Math.min(100, gs.stress + 40);
-                gs.energy = Math.round(gs.energy * 0.6); gs.focus = Math.round(gs.focus * 0.5);
-                gs.mental = Math.round(gs.mental * 0.4); gs.luck = Math.max(0, gs.luck - 15);
+                gs.knowledge = Math.round(gs.knowledge * 0.6); gs.stress = Math.min(100, gs.stress + 45);
+                gs.energy = Math.round(gs.energy * 0.5); gs.focus = Math.round(gs.focus * 0.4);
+                gs.mental = Math.round(gs.mental * 0.3); gs.luck = Math.max(0, gs.luck - 20);
+                gs.rhythm = Math.round(gs.rhythm * 0.5);
+            }
+        },
+        {
+            name: "にゃまからの暴言",
+            message: "突然、にゃまが現れて心無い言葉を浴びせられた…心が折れそうだ。",
+            effect: (gs) => {
+                gs.knowledge = Math.round(gs.knowledge * 0.4); gs.stress = Math.min(100, gs.stress + 35);
+                gs.energy = Math.round(gs.energy * 0.4); gs.focus = Math.round(gs.focus * 0.4);
+                gs.mental = Math.round(gs.mental * 0.4); gs.luck = Math.max(0, gs.luck - 12);
                 gs.rhythm = Math.round(gs.rhythm * 0.6);
-            }
-        },
-        {
-            name: "にゃまからの暴言",
-            message: "突然、にゃまが現れて心無い言葉を浴びせられた…心が折れそうだ。",
-            effect: (gs) => {
-                gs.knowledge = Math.round(gs.knowledge * 0.5); gs.stress = Math.min(100, gs.stress + 30);
-                gs.energy = Math.round(gs.energy * 0.5); gs.focus = Math.round(gs.focus * 0.5);
-                gs.mental = Math.round(gs.mental * 0.5); gs.luck = Math.max(0, gs.luck - 10);
-                gs.rhythm = Math.round(gs.rhythm * 0.7);
-            }
-        },
-        {
-            name: "にゃまからの暴言",
-            message: "突然、にゃまが現れて心無い言葉を浴びせられた…心が折れそうだ。",
-            effect: (gs) => {
-                gs.knowledge = Math.round(gs.knowledge * 0.5); gs.stress = Math.min(100, gs.stress + 30);
-                gs.energy = Math.round(gs.energy * 0.5); gs.focus = Math.round(gs.focus * 0.5);
-                gs.mental = Math.round(gs.mental * 0.5); gs.luck = Math.max(0, gs.luck - 10);
-                gs.rhythm = Math.round(gs.rhythm * 0.7);
             }
         },
         {
             name: "親に見られたくない場面",
             message: "自室で㊙️㊙️していたら、親に一番見られたくない場面を目撃されてしまった…最悪だ。",
             effect: (gs) => {
-                gs.stress = Math.min(100, gs.stress + 40); gs.energy = Math.round(gs.energy * 0.6);
-                gs.focus = Math.round(gs.focus * 0.6); gs.mental = Math.round(gs.mental * 0.5);
-                gs.rhythm = Math.max(0, gs.rhythm - 20);
+                gs.stress = Math.min(100, gs.stress + 45); gs.energy = Math.round(gs.energy * 0.55);
+                gs.focus = Math.round(gs.focus * 0.5); gs.mental = Math.round(gs.mental * 0.4);
+                gs.rhythm = Math.max(0, gs.rhythm - 25);
             }
         },
         {
             name: "親に将来を心配される",
             message: "親から「28歳にもなって将来どうするの？」と真剣に心配されてしまった…答えに窮し、気分が重い。",
             effect: (gs) => {
-                gs.stress = Math.min(100, gs.stress + 25); gs.mental = Math.max(0, gs.mental - 15);
-                gs.focus = Math.max(0, gs.focus - 10);
+                gs.stress = Math.min(100, gs.stress + 30); gs.mental = Math.max(0, gs.mental - 20);
+                gs.focus = Math.max(0, gs.focus - 15);
             }
         },
         {
             name: "体調不良",
             message: "原因不明の体調不良に見舞われた。今日は何もできそうにない…。",
             effect: (gs) => {
-                gs.energy = Math.max(5, gs.energy - 40); gs.focus = Math.max(5, gs.focus - 30); gs.stress = Math.min(100, gs.stress + 20);
-                gs.activeEffects['bad_condition'] = { duration: 3, displayName: '体調不良', value: 0.5 };
+                gs.energy = Math.max(5, gs.energy - 45); gs.focus = Math.max(5, gs.focus - 35); gs.stress = Math.min(100, gs.stress + 25);
+                gs.activeEffects['bad_condition'] = { duration: 3, displayName: '体調不良', value: 0.4 };
             }
         },
         {
             name: "大谷選手の活躍",
             message: "ニュースで大谷選手が特大ホームランを打ったのを見た！なんだか元気が出てきた！勉強しなきゃ..",
             effect: (gs) => {
-                gs.knowledge = Math.round(gs.knowledge * 1.1); gs.stress = Math.max(0, gs.stress - 10);
-                gs.energy = Math.round(gs.energy * 1.2); gs.focus = Math.round(gs.focus * 1.2);
-                gs.mental = Math.round(gs.mental * 1.2); gs.luck = Math.min(100, gs.luck + 15);
+                gs.knowledge = Math.round(gs.knowledge * 1.05); gs.stress = Math.max(0, gs.stress - 8);
+                gs.energy = Math.round(gs.energy * 1.1); gs.focus = Math.round(gs.focus * 1.1);
+                gs.mental = Math.round(gs.mental * 1.1); gs.luck = Math.min(100, gs.luck + 10);
             }
-        },
+        }
     ];
-    const RANDOM_EVENT_CHANCE = 0.12;
+    const RANDOM_EVENT_CHANCE = 0.07;
 
     let gameState = JSON.parse(JSON.stringify(INITIAL_STATE));
 
@@ -411,6 +401,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function triggerRandomEvent() {
+        eventNotificationArea.style.display = 'none'; // Hide by default
         if (Math.random() < RANDOM_EVENT_CHANCE) {
             const event = RANDOM_EVENTS[getRandomInt(0, RANDOM_EVENTS.length - 1)];
             eventMessageElem.innerHTML = `<strong>イベント発生！</strong> ${event.message}`;
@@ -419,11 +410,11 @@ document.addEventListener('DOMContentLoaded', () => {
             LogHelper.addRaw(`<hr><strong>ランダムイベント: ${event.name}</strong><br>${event.message}`);
             showThought(`「${event.name}」発生！`, 2800, 'neutral');
             setTimeout(() => {
-                eventNotificationArea.style.display = 'none';
-            }, 4500);
+                // Keep displayed until next action to ensure player sees it with log
+                // eventNotificationArea.style.display = 'none'; 
+            }, 4500); // Duration for visibility, but log will persist it.
             return true;
         }
-        eventNotificationArea.style.display = 'none';
         return false;
     }
 
@@ -487,7 +478,7 @@ document.addEventListener('DOMContentLoaded', () => {
             LogHelper.add(`働いて ${formatMessage("+" + earnings, "positive")}円稼いだ。`);
             showThought("なんとか食いつなげる…", 1800, 'neutral');
         }
-        gameState.energy -= Math.round(calculateChange(45, [], [{paramState:0, paramNameForCost:'energy'}])); // Base cost for energy
+        gameState.energy -= Math.round(calculateChange(45, [], [{paramState:0, paramNameForCost:'energy'}]));
         gameState.stress += getRandomInt(10, 20);
         gameState.rhythm -= getRandomInt(4, 9);
         gameState.focus -= getRandomInt(8,14);
@@ -516,7 +507,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function insultOnline() {
-        LogHelper.add("<strong><i class='fas fa-keyboard'></i> オープンチャットで他人を激しく罵倒した。</strong>");
+        LogHelper.add("<strong><i class='fas fa-keyboard'></i> オープンチャットでにゃまを激しく罵倒した。</strong>");
         let stressRelief = getRandom(20, 35);
         gameState.stress -= Math.round(stressRelief);
         LogHelper.add(`一瞬の快感。ストレスが${formatChange(-Math.round(stressRelief))}。`);
@@ -655,20 +646,20 @@ document.addEventListener('DOMContentLoaded', () => {
             if (passed) {
                 resultTitleText = "奇跡の合格！";
                 if (internalScore > passThreshold * 1.15) {
-                    resultMessageText = `<strong>信じられないほどの高得点で合格です！</strong><br>これはまさに奇跡！絶望的な状況から、しろちゃんは偉業を成し遂げました！<br>その名は語り草となるでしょう！(なお現実は知っての通り...)`;
+                    resultMessageText = `<strong>信じられないほどの高得点で合格です！</strong><br>これはまさに奇跡！絶望的な状況から、しろちゃんは偉業を成し遂げました！<br>その名は語り草となるでしょう！(なお現実は悲惨です笑)`;
                 } else {
-                    resultMessageText = `<strong>おめでとうございます！困難を乗り越え、見事合格です！</strong><br>厳しい道のりでしたが、最後の最後で努力と幸運が実を結びました。<br>しろちゃんの未来に光が射しました！(なお現実は知っての通り...)`;
+                    resultMessageText = `<strong>おめでとうございます！困難を乗り越え、見事合格です！</strong><br>厳しい道のりでしたが、最後の最後で努力と幸運が実を結びました。<br>しろちゃんの未来に光が射しました！(なお現実は悲惨です笑)`;
                 }
                 examShiroImageElem.src = gameState.shiroHappyImage || INITIAL_STATE.shiroImage;
                 examResultTitle.style.color = 'var(--success-color)';
             } else {
                 resultTitleText = "当然、力及ばず…";
                  if (internalScore < passThreshold * 0.5) {
-                     resultMessageText = `<strong>残念ながら、今回は夢破れました…。</strong><br>あまりにも厳しい現実がしろちゃんを打ちのめしました。しかし、この経験は無駄ではなかったはず…。現実通りですね。`;
+                     resultMessageText = `<strong>残念ながら、今回は夢破れました…。</strong><br>あまりにも厳しい現実がしろちゃんを打ちのめしました。しかし、この経験は無駄ではなかったはず…。`;
                 } else if (internalScore < passThreshold * 0.8) {
-                    resultMessageText = `<strong>あと一歩、本当にあと一歩でしたが、不合格です。</strong><br>悔やんでも悔やみきれない結果ですが、顔を上げてください。挑戦した勇気は本物です。現実通りですね。`;
+                    resultMessageText = `<strong>あと一歩、本当にあと一歩でしたが、不合格です。</strong><br>悔やんでも悔やみきれない結果ですが、顔を上げてください。挑戦した勇気は本物です。(現実通りですね!)`;
                 } else {
-                    resultMessageText = `<strong>本当に惜しい結果となりました…不合格です。</strong><br>運命のサイコロは非情にも裏を向きました。あと少し何かが違えば…そう思わずにはいられません。現実通りですね。`;
+                    resultMessageText = `<strong>本当に惜しい結果となりました…不合格です。</strong><br>運命のサイコロは非情にも裏を向きました。あと少し何かが違えば…そう思わずにはいられません。(現実通りですね!)`;
                 }
                 examShiroImageElem.src = gameState.shiroSadImage || INITIAL_STATE.shiroImage;
                 examResultTitle.style.color = 'var(--danger-color)';
