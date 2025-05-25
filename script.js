@@ -768,13 +768,13 @@ document.addEventListener('DOMContentLoaded', () => {
             if (internalScore >= passThreshold) {
                 if (gameState.luck > 75 && gameState.mental > 80 && internalScore > passThreshold * 1.01) {
                     passed = true;
-                } else if (internalScore > passThreshold * 1.02 && (gameState.luck > 70 || gameState.mental > 78) && Math.random() < 0.6) {
+                } else if (internalScore > passThreshold * 1.02 && (gameState.luck > 70 || gameState.mental > 75) && Math.random() < 0.6) {
                     passed = true;
                 } else if (Math.random() < (0.10 + (gameState.luck - 70) / 150 + (gameState.mental - 70)/200) ) {
                     passed = true;
                 }
             } else {
-                 if (internalScore > passThreshold * 0.93 && gameState.luck > 96 && gameState.mental > 92 && Math.random() < 0.05) {
+                 if (internalScore > passThreshold * 0.93 && gameState.luck > 90 && gameState.mental > 90 && Math.random() < 0.05) {
                     passed = true;
                  } else {
                     passed = false;
