@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>しろちゃん育成ゲーム</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>しろちゃんを育てて予備試験に合格させよう！</h1>
+            <p class="turn-counter">ターン: <span id="turn-display">1</span> / 15</p>
+        </header>
+
+        <main>
+            <div class="shiro-status-card">
+                <div class="shiro-image-container">
+                    <img src="shiro.png" alt="しろちゃん" id="shiro-image">
+                </div>
+                <div class="parameters">
+                    <h2>ステータス</h2>
+                    <div class="param-grid">
+                        <p>知識: <span id="knowledge-display">10</span></p>
+                        <p>ストレス: <span id="stress-display">0</span></p>
+                        <p>体力: <span id="energy-display">100</span></p>
+                        <p>所持金: <span id="money-display">1000</span>円</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="actions-card">
+                <h2>アクションを選択</h2>
+                <div class="action-buttons-grid">
+                    <button data-action="study">勉強をする</button>
+                    <button data-action="insult">人に暴言を浴びせる</button>
+                    <button data-action="pachinko">パチンコに行く</button>
+                    <button data-action="sleep">寝る</button>
+                    <button data-action="play_game">ゲームをする</button>
+                </div>
+            </div>
+
+            <div class="message-log-card">
+                <h2>ログ</h2>
+                <div id="log-message-area">
+                    <p id="log-message">しろちゃんを育成しよう！新しい一日が始まったよ。</p>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>&copy; 2025 しろちゃん育成プロジェクト</p>
+        </footer>
+    </div>
+
+    <div class="modal" id="exam-result-modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2 id="exam-result-title">試験結果</h2>
+            <div id="exam-shiro-image-container" class="modal-shiro-image">
+                 <img src="shiro.png" alt="結果しろちゃん" id="exam-shiro-image">
+            </div>
+            <p id="exam-result-message"></p>
+            <p id="final-score-display"></p>
+            <button id="restart-game-button">もう一度挑戦する</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
