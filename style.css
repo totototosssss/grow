@@ -28,7 +28,7 @@
     --accent-color-rgb: 17, 122, 139;
     --success-color-rgb: 30, 126, 52;
     --danger-color-rgb: 178, 31, 45;
-    --warning-color-rgb: 211, 158, 0; /* Added for event notification */
+    --warning-color-rgb: 211, 158, 0;
     --card-background-rgb: 255, 255, 255;
 }
 
@@ -573,14 +573,28 @@ body {
 .fiction-divider {
     border: 0;
     height: 1px;
-    background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(var(--secondary-color-rgb), 0.75), rgba(0, 0, 0, 0));
-    margin: 15px 0;
+    background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(var(--secondary-color-rgb), 0.5), rgba(0, 0, 0, 0));
+    margin: 12px 0;
 }
-.fiction-notice {
-    font-size: 0.8em !important;
+.fiction-notice-title {
+    font-weight: bold;
+    color: var(--primary-color);
+    margin-bottom: 5px !important;
+    font-size: 0.9em !important;
+}
+.fiction-notice-body {
+    font-size: 0.85em !important;
     font-style: italic;
     color: var(--text-light-color) !important;
-    opacity: 0.8;
+    opacity: 0.9;
+    line-height: 1.5 !important;
+    margin-bottom: 10px !important;
+}
+.fiction-disclaimer {
+    font-size: 0.7em !important;
+    color: var(--secondary-color) !important;
+    opacity: 0.7;
+    margin-top: 10px !important;
 }
 
 
