@@ -82,6 +82,16 @@ document.addEventListener('DOMContentLoaded', () => {
             name: '高級ノイズキャンセリングイヤホン', price: 5000, type: 'permanent',
             description: '所有中、勉強時の集中力低下を40%抑制。ストレスの自然増加をわずかに軽減。',
             permanentEffect: { focusRetentionBoost: 0.40, dailyStressResist: 1 }
+        },
+        'small_lucky_charm': {
+            name: '小さな交通安全お守り',
+            price: 1000, 
+            type: 'permanent',
+            description: '所有中、合格運が少し上昇し(+10初期ボーナス)、さらに毎日少しずつ運気が上がる気がする。',
+            permanentEffect: {
+                luck: 10,
+                dailyLuckIncrease: 2.5 
+            }
         }
     };
 
@@ -590,7 +600,7 @@ document.addEventListener('DOMContentLoaded', () => {
             stressRelief *= (1 + (gameState.mental / 350));
 
             gameState.stress -= Math.round(stressRelief);
-            LogHelper.add(`勉強ストレスが${formatChange(-Math.round(stressRelief))}！一瞬だけ現実を忘れられた。`);
+            LogHelper.add(`ストレスが${formatChange(-Math.round(stressRelief))}！一瞬だけ現実を忘れられた。`);
 
             gameState.energy -= Math.round(calculateChange(32, [], [], 1.0, true));
             gameState.focus -= getRandomInt(12, 20);
@@ -628,7 +638,7 @@ document.addEventListener('DOMContentLoaded', () => {
             gameState.luck -= getRandomInt(10,16);
             gameState.focus -= getRandomInt(12,20);
 
-            LogHelper.add(`オプチャで${target}への悪態は不発に終わり、逆に言い返されてしまった…。勉強ストレスが${formatChange(stressIncrease,"negative")}、精神力が${formatChange(-mentalDamage,"negative")}。`);
+            LogHelper.add(`オプチャで${target}への悪態は不発に終わり、逆に言い返されてしまった…。ストレスが${formatChange(stressIncrease,"negative")}、精神力が${formatChange(-mentalDamage,"negative")}。`);
             LogHelper.add(`集中力も散漫になり(${formatChange(getRandomInt(-20,-12),"negative")})、合格運も下がった(${formatChange(getRandomInt(-15,-10),"negative")})。`);
             showThought("最悪だ…余計に疲れた…。", 2200, 'failure');
         }
@@ -680,7 +690,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         gameState.energy += Math.round(energyGain);
         gameState.stress -= Math.round(stressRelief);
-        LogHelper.add(`体力が回復し(${formatChange(energyGain)})、勉強ストレスも軽減された(${formatChange(-stressRelief)})。`);
+        LogHelper.add(`体力が回復し(${formatChange(energyGain)})、ストレスも軽減された(${formatChange(-stressRelief)})。`);
 
         let rhythmLikeEffectOnFocusMental = (gameState.permanentBuffs.rhythmImprovementBoost || 1.0) * getRandomInt(1, 5); // rhythm param removed
         gameState.focus = Math.max(15, gameState.focus + Math.round(rhythmLikeEffectOnFocusMental * 0.8));
@@ -696,17 +706,19 @@ document.addEventListener('DOMContentLoaded', () => {
         applyActiveEffectsEndOfDay();
 
         let dailyStressMod = gameState.permanentBuffs.dailyStressResist || 0;
-        gameState.stress += getRandomInt(2, 5) - dailyStressMod;
-        gameState.mental -= getRandomInt(1,4);
-        gameState.energy -= getRandomInt(1,3);
-        gameState.focus -= getRandomInt(2,5);
+        gameState.stress += getRandomInt(0, 4) - dailyStressMod;
+        gameState.mental -= getRandomInt(0,4);
+        gameState.energy -= getRandomInt(0,4);
+        gameState.focus -= getRandomInt(0,4);
         
         if(gameState.permanentBuffs.dailyLuckIncrease) {
             gameState.luck += gameState.permanentBuffs.dailyLuckIncrease;
             LogHelper.addRaw(`<br>${formatMessage("お守り","item")}から微かな加護を感じる(合格運${formatChange(gameState.permanentBuffs.dailyLuckIncrease, "positive")})。`);
         } else {
-            gameState.luck += getRandomInt(-4,-1); // Luck significantly decreases
+            gameState.luck += getRandomInt(-2,-1); // Luck significantly decreases
         }
+        gameState.luck = clamp(gameState.luck, 0, 100);
+        
         
         let dailySummaryPrepend = "";
         if (LogHelper.logs.length > 0) {
