@@ -57,17 +57,17 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         'best_exercise_book': {
             name: 'Sランク過去問集', price: 7500, type: 'permanent',
-            description: '所有中、「演習をする」際の法律知識獲得量が常に10%上昇し、集中力消費が5%軽減。',
-            permanentEffect: { exerciseKnowledgeBoost: 0.10, exerciseFocusSave: 0.05 }
+            description: '所有中、「演習をする」際の法律知識獲得量が常に20%上昇し、集中力消費が10%軽減。',
+            permanentEffect: { exerciseKnowledgeBoost: 0.20, exerciseFocusSave: 0.10 }
         },
         'intensive_lecture_ticket': {
             name: '短期集中講座受講証', price: 3000, type: 'consumable_active',
-            description: '使用: 法律知識+6、集中力+12、精神力+10。勉強ストレス+20。次回「基本書を読む」または「演習をする」の効率1.15倍(1日限定)。',
+            description: '使用: 法律知識+9、集中力+15、精神力+12。勉強ストレス+10。次回「基本書を読む」または「演習をする」の効率1.15倍(1日限定)。',
             use: (gameState, logHelper) => {
-                gameState.knowledge += 6; logHelper.add(`法律知識が${formatChange(6)}。`);
-                gameState.focus += 12; logHelper.add(`集中力が${formatChange(12)}。`);
-                gameState.mental += 10; logHelper.add(`精神力が${formatChange(10)}。`);
-                gameState.stress += 20; logHelper.add(`講座の負荷で勉強ストレスが${formatChange(20, "negative")}。`);
+                gameState.knowledge += 9; logHelper.add(`法律知識が${formatChange(9)}。`);
+                gameState.focus += 15; logHelper.add(`集中力が${formatChange(15)}。`);
+                gameState.mental += 12; logHelper.add(`精神力が${formatChange(12)}。`);
+                gameState.stress += 15; logHelper.add(`講座の負荷で勉強ストレスが${formatChange(10, "negative")}。`);
                 const boostTarget = Math.random() < 0.5 ? 'studyTextbookBoost' : 'studyExerciseBoost';
                 const targetName = boostTarget === 'studyTextbookBoost' ? '基本書研究' : '演習';
                 gameState.activeEffects[boostTarget] = { duration: 2, value: 1.15, displayName: `集中講座(${targetName})` };
@@ -77,19 +77,20 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         'counseling_ticket': {
             name: 'カウンセリング予約券', price: 1800, type: 'consumable_active',
-            description: '使用: 精神力+25、勉強ストレス-30。心の専門家は頼りになる。',
+            description: '使用: 精神力+35、勉強ストレス-40。心の専門家は頼りになる。',
             use: (gameState, logHelper) => {
-                gameState.mental += 25; logHelper.add(`精神力が${formatChange(25)}。`);
-                gameState.stress -= 30; logHelper.add(`勉強ストレスが${formatChange(-30)}。`);
+                gameState.mental += 35; logHelper.add(`精神力が${formatChange(35)}。`);
+                gameState.stress -= 40; logHelper.add(`勉強ストレスが${formatChange(-40)}。`);
                 return true;
             }
         },
         'noise_cancelling_earphones': {
             name: '高級ノイズキャンセリングイヤホン', price: 5000, type: 'permanent',
-            description: '所有中、勉強時の集中力低下を10%抑制。勉強ストレスの自然増加をわずかに軽減。',
-            permanentEffect: { focusRetentionBoost: 0.10, dailyStressResist: 1 }
+            description: '所有中、勉強時の集中力低下を40%抑制。勉強ストレスの自然増加をわずかに軽減。',
+            permanentEffect: { focusRetentionBoost: 0.40, dailyStressResist: 1 }
         }
     };
+
 
     const RANDOM_EVENTS = [
         {
