@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         'omikuji': {
             name: '開運おみくじ',
-            price: 400,
+            price: 150,
             type: 'consumable_active',
             description: '今日の運勢を占う。結果次第で合格運や精神状態が変化する。1日1回限定。',
             use: (gameState, logHelper) => {
@@ -52,14 +52,14 @@ document.addEventListener('DOMContentLoaded', () => {
         
                 if (roll < 5) { // 5% 大吉
                     resultText = "【大吉】";
-                    luckChange = getRandomInt(15, 25);
-                    mentalChange = getRandomInt(5, 10); // 大吉で精神力アップ
+                    luckChange = getRandomInt(30,45);
+                    mentalChange = getRandomInt(10,20); // 大吉で精神力アップ
                     thoughtMessage = "やったー！これはツイてる！最高の運勢だ！";
                     thoughtType = 'success';
                 } else if (roll < 20) { // 15% 中吉
                     resultText = "【中吉】";
-                    luckChange = getRandomInt(8, 14);
-                    mentalChange = getRandomInt(3, 7); // 中吉で精神力少しアップ
+                    luckChange = getRandomInt(10, 18);
+                    mentalChange = getRandomInt(5, 10); // 中吉で精神力少しアップ
                     thoughtMessage = "おお、中吉！なかなか良い感じ！";
                     thoughtType = 'success';
                 } else if (roll < 50) { // 30% 小吉
@@ -88,8 +88,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     thoughtType = 'failure';
                 } else { // 5% 大凶
                     resultText = "【大凶】";
-                    luckChange = getRandomInt(-15, -10);
-                    mentalChange = getRandomInt(-15, -10); // 大凶で精神力大幅ダウン
+                    luckChange = getRandomInt(-10, -8);
+                    mentalChange = getRandomInt(-10, -8); // 大凶で精神力大幅ダウン
                     thoughtMessage = "まさかの大凶…終わった…。今日はもう何も信じられない…！";
                     thoughtType = 'failure';
                 }
