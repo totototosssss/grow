@@ -780,7 +780,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     passed = true;
                 }
             } else {
-                 if (internalScore > passThreshold * 0.93 && gameState.luck > 90 && gameState.mental > 90 && Math.random() < 0.05) {
+                 if (internalScore > passThreshold * 0.9 && gameState.luck > 85 && gameState.mental > 70 && Math.random() < 0.05) {
                     passed = true;
                  } else {
                     passed = false;
