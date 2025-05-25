@@ -670,10 +670,10 @@ document.addEventListener('DOMContentLoaded', () => {
         applyActiveEffectsEndOfDay();
 
         let dailyStressMod = gameState.permanentBuffs.dailyStressResist || 0;
-        gameState.stress += getRandomInt(3, 7) - dailyStressMod;
-        gameState.mental -= getRandomInt(2,5);
-        gameState.energy -= getRandomInt(2,4);
-        gameState.focus -= getRandomInt(3,6);
+        gameState.stress += getRandomInt(2, 5) - dailyStressMod;
+        gameState.mental -= getRandomInt(1,4);
+        gameState.energy -= getRandomInt(1,3);
+        gameState.focus -= getRandomInt(2,5);
         
         if(gameState.permanentBuffs.dailyLuckIncrease) {
             gameState.luck += gameState.permanentBuffs.dailyLuckIncrease;
