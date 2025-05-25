@@ -768,7 +768,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     examShiroImageElem.src = gameState.shiroSadImage || INITIAL_STATE.shiroImage; // Or a specific "arrested" image
                 } else if (gameState.pachinkoCount >= 3) {
                      resultTitleText = "予備試験 不合格…そして借金地獄";
-                     resultMessageText = `<strong>予備試験にも落ち、パチンコで作った借金は雪だるま式に膨れ上がった。</strong><br>取り立ての電話は鳴り止まず、もはやまともな生活は送れない。<br>しろちゃんの人生は、ギャンブルによって完全に破綻した…。`;
+                     resultMessageText = `<strong>予備試験にも落ち、パチンコで作った借金は雪だるま式に膨れ上がった。</strong><br>取り立ての電話は鳴り止まず、もはやまともな生活は送れない。<br>しろちゃんは自殺してしまった。`;
                      examShiroImageElem.src = gameState.shiroSadImage || INITIAL_STATE.shiroImage; // Or a specific "bankrupt" image
                 } else {
                     resultTitleText = "予備試験 不合格…";
