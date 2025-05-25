@@ -762,11 +762,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 fictionNoticeElem.innerHTML = `―――だが、これはあくまでゲームの中のしろちゃんの輝かしい未来。<br>現実世界のしろちゃんは、この瞬間も自室のベッドの上で<br>「もう何もしたくない…」と呟きながら、怠惰な時間を満喫しているのであった…！<br>めでたし、めでたし？`;
                 fictionEndingElem.style.display = 'block';
             } else {
-                if (gameState.insultOnlineCount >= 3) {
+                if (gameState.insultOnlineCount >= MAX_DAYS/5) {
                     resultTitleText = "予備試験 不合格…そして逮捕";
                     resultMessageText = `<strong>予備試験にも落ち、度重なるネットでの誹謗中傷が仇となった…。</strong><br>ある日、玄関のチャイムが鳴り、ドアを開けるとそこには警察官が立っていた。<br>「しろちゃん、ちょっと署まで来てもらおうか」…人生、詰んだ。`;
                     examShiroImageElem.src = gameState.shiroSadImage || INITIAL_STATE.shiroImage; // Or a specific "arrested" image
-                } else if (gameState.pachinkoCount >= 3) {
+                } else if (gameState.pachinkoCount >= MAX_DAYS/5) {
                      resultTitleText = "予備試験 不合格…そして借金地獄";
                      resultMessageText = `<strong>予備試験にも落ち、パチンコで作った借金は雪だるま式に膨れ上がった。</strong><br>取り立ての電話は鳴り止まず、もはやまともな生活は送れない。<br>しろちゃんは自殺してしまった。`;
                      examShiroImageElem.src = gameState.shiroSadImage || INITIAL_STATE.shiroImage; // Or a specific "bankrupt" image
