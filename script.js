@@ -2,8 +2,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const MAX_DAYS = 15;
     const INITIAL_STATE = {
         day: 1,
-        knowledge: 2, stress: 30, energy: 45, money: 500,
-        focus: 10, mental: 20, luck: 3,
+        knowledge: 3, stress: 20, energy: 60, money: 600,
+        focus: 20, mental: 30, luck: 5,
         shiroImage: 'shiro.png',
         shiroHappyImage: 'shiro.png',
         shiroSadImage: 'shiro.png',
