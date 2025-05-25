@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
         focus: 20, mental: 30, luck: 5,
         shiroImage: 'shiro.png',
         shiroHappyImage: 'shiro_happy.png',
-        shiroSadImage: 'shiro.png',
+        shiroSadImage: 'shiro_sad.png',
         logMessage: 'しろちゃんの予備試験への道が始まる…。合格は絶望的だ。',
         inventory: [],
         permanentBuffs: {},
