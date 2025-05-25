@@ -764,7 +764,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     passed = true;
                 } else if (internalScore > passThreshold * 1.02 && (gameState.luck > 70 || gameState.mental > 75) && Math.random() < 0.6) {
                     passed = true;
-                } else if (Math.random() < (0.10 + (gameState.knowledge - 70) / 100 +(gameState.luck - 70) / 150 + (gameState.mental - 70)/200) ) {
+                } else if (Math.random() < (0.10 + Math.max(0,(gameState.knowledge - 70)) / 100 +Math.max(0,(gameState.luck - 70)) / 150 + Math.max(0,(gameState.mental - 70))/200) ) {
                     passed = true;
                 }
             } else {
