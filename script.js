@@ -765,16 +765,16 @@ document.addEventListener('DOMContentLoaded', () => {
             internalScore += gameState.energy * 0.35;
 
             internalScore = Math.max(0, Math.round(internalScore));
-            const passThreshold = 230;
+            const passThreshold = 220;
 
             let resultMessageText = "";
             let resultTitleText = "";
             let passed = false;
 
             if (internalScore >= passThreshold) {
-                if (gameState.luck > 75 && gameState.mental > 80 && internalScore > passThreshold * 1.01) {
+                if (gameState.luck > 75 && gameState.mental > 80 && internalScore > passThreshold * 1.1) {
                     passed = true;
-                } else if (internalScore > passThreshold * 1.02 && (gameState.luck > 70 || gameState.mental > 75) && Math.random() < 0.6) {
+                } else if (internalScore > passThreshold * 1.05 && (gameState.luck > 70 || gameState.mental > 75) && Math.random() < 0.6) {
                     passed = true;
                 } else if (Math.random() < (0.10 + Math.max(0,(gameState.knowledge - 70)) / 100 +Math.max(0,(gameState.luck - 70)) / 150 + Math.max(0,(gameState.mental - 70))/200) ) {
                     passed = true;
