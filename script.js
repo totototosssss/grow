@@ -35,24 +35,18 @@ document.addEventListener('DOMContentLoaded', () => {
             description: '究極の癒やし。使用すると勉強ストレスが0になり、集中力が最大まで回復する。人生を賭ける価値はあるか…？活動資金もごっそり減る。',
             use: (gameState, logHelper) => {
                 gameState.stress = 0;
-                logHelper.add(`勉強ストレスが完全に消え去った…！`); // formatChange(0)だと表示が微妙なので直接メッセージ
-                gameState.focus = 100; // 集中力の最大値を100と仮定 (clamp関数で100に丸められます)
+                logHelper.add(`勉強ストレスが完全に消え去った…！`); 
+                gameState.focus = 100; 
                 logHelper.add(`集中力が最大までみなぎってきた！`);
                 gameState.soaplandUsedCount++;
 
-                // 暗黙のコストとして、運や精神力が少し下がるなどのペナルティも考えられますが、
-                // 今回は指示された効果のみを実装します。
-                // 例: gameState.luck -= 10;
-                // 例: gameState.mental -= 15;
-                // LogHelper.add(`しかし、何か大切なものを失った気がする…。`);
-
-                // 高価なサービスなので、お金が追加で減る演出もアリです（今回は価格に含めています）
-                // gameState.money -= 10000; // 例：追加料金
-                // LogHelper.add(`最高級のサービスには追加料金が必要だった…。活動資金がさらに減少。`);
+ 
+                gameState.money -= 10000;
+                LogHelper.add(`最高級のサービスには追加料金が必要だった…。活動資金がさらに減少。`);
 
 
-                showThought("全てを忘れてリフレッシュした…！", 2500, 'success'); // 専用の感想
-                return true; // 使用成功
+                showThought("全てを忘れてリフレッシュした…！", 2500, 'success'); 
+                return true; 
             }
         },
         'best_exercise_book': {
