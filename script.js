@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         {
             name: "親に見られたくない場面",
-            message: "自室で㊙️㊙️していたら、親に一番見られたくない場面を目撃されてしまった…最悪だ。",
+            message: "自室で㊙️㊙️をしていたら、親に一番見られたくない場面を目撃されてしまった…最悪だ。",
             effect: (gs) => {
                 gs.stress = Math.min(100, gs.stress + 55); gs.energy = Math.round(gs.energy * 0.45);
                 gs.focus = Math.round(gs.focus * 0.4); gs.mental = Math.round(gs.mental * 0.3);
@@ -120,8 +120,8 @@ document.addEventListener('DOMContentLoaded', () => {
             effect: (gs) => { gs.knowledge += getRandomInt(1,3); gs.focus += getRandomInt(4,9); gs.stress -= 4;}
         },
         {
-            name: "模試の成績が悪く落ち込む…",
-            message: "先日受けた模試の結果が返ってきた。E判定…もうダメかもしれない…。",
+            name: "真実を言われ落ち込む…",
+            message: "にゃまに「予備試験なんて夢見すぎ笑」と言われてしまった。もうダメかもしれない…。",
             effect: (gs) => { gs.mental -= getRandomInt(20,30); gs.stress += getRandomInt(25,35); gs.focus -= getRandomInt(14,20); gs.knowledge -=getRandomInt(0,1);}
         },
         {
