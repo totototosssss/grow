@@ -39,7 +39,7 @@
 }
 
 html {
-    font-size: 16px; /* Base font size for rem units */
+    font-size: 16px;
 }
 
 body {
@@ -106,7 +106,6 @@ body {
     vertical-align: middle;
 }
 
-
 .header-info-wrapper {
     display: flex;
     flex-wrap: wrap;
@@ -162,7 +161,7 @@ body {
 
 .event-notification-area {
     background-color: var(--warning-color);
-    color: #fff;
+    color: var(--text-color); /* Changed for better contrast on yellow */
     padding: 10px 15px;
     border-radius: var(--border-radius);
     margin-bottom: 15px;
@@ -170,6 +169,7 @@ body {
     font-weight: 500;
     font-size: 0.9em;
     box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+    border: 1px solid #ffeeba; /* Lighter border for warning */
     animation: fadeInSlideDown 0.4s ease-out;
 }
 @keyframes fadeInSlideDown {
@@ -612,7 +612,7 @@ body {
 }
 #item-shop-list {
     display: grid;
-    grid-template-columns: 1fr; /* Single column for mobile-first */
+    grid-template-columns: 1fr;
     gap: 12px;
     margin-top: 15px;
     max-height: 55vh;
@@ -693,16 +693,15 @@ body {
     .shop-button { margin-bottom: 0; }
 }
 
-
-@media (max-width: 767px) { /* Adjustments for tablets and large phones */
+@media (max-width: 767px) {
     .game-wrapper { padding: 12px; }
     .game-header { padding: 10px 12px; }
     .param-grid { grid-template-columns: repeat(2, 1fr); }
     .parameters-container p[data-param] span { font-size: 1.05em; }
 }
 
-@media (max-width: 480px) { /* Stricter adjustments for small phones */
-    html { font-size: 14.5px; } /* Slightly smaller base for small devices */
+@media (max-width: 480px) {
+    html { font-size: 14.5px; }
     body { padding: 5px; }
     .game-wrapper { padding: 8px; margin-top: 5px; margin-bottom: 5px; }
 
