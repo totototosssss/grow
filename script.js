@@ -624,7 +624,7 @@ document.addEventListener('DOMContentLoaded', () => {
             gameState.luck -= getRandomInt(18, 28);
 
             LogHelper.add(`オプチャで${target}を完膚なきまでに言い負かした！気分爽快だ！勉強ストレスが${formatChange(-Math.round(stressRelief))}、精神力が${formatChange(mentalBoost)}、集中力が${formatChange(focusBoost)}。`);
-            LogHelper.add(`しかし、このような行為は合格運を著しく下げるだろう(${formatChange(getRandomInt(-28,-18), "negative")})。`);
+            LogHelper.add(`しかし、このような行為は合格運を著しく下げるだろう(${formatChange(getRandomInt(-10,-2), "negative")})。`);
             showThought("一瞬だけスッキリした…！", 2000, 'success');
         } else {
             let stressIncrease = getRandomInt(20, 30);
@@ -635,7 +635,7 @@ document.addEventListener('DOMContentLoaded', () => {
             gameState.focus -= getRandomInt(12,20);
 
             LogHelper.add(`オプチャで${target}への悪態は不発に終わり、逆に言い返されてしまった…。勉強ストレスが${formatChange(stressIncrease,"negative")}、精神力が${formatChange(-mentalDamage,"negative")}。`);
-            LogHelper.add(`集中力も散漫になり(${formatChange(getRandomInt(-20,-12),"negative")})、合格運も下がった(${formatChange(getRandomInt(-16,-10),"negative")})。`);
+            LogHelper.add(`集中力も散漫になり(${formatChange(getRandomInt(-20,-12),"negative")})、合格運も下がった(${formatChange(getRandomInt(-15,-10),"negative")})。`);
             showThought("最悪だ…余計に疲れた…。", 2200, 'failure');
         }
     }
