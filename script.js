@@ -14,7 +14,8 @@ document.addEventListener('DOMContentLoaded', () => {
         insultOnlineCount: 0,
         pachinkoCount: 0,
         soaplandUsedCount: 0,
-        studyActionCount: 0 
+        studyActionCount: 0,
+        omikujiUsedToday: false
     };
 
     const ITEMS = {
@@ -26,6 +27,90 @@ document.addEventListener('DOMContentLoaded', () => {
                 gameState.focus += 10; logHelper.add(`集中力が${formatChange(15)}。`);
                 gameState.stress += 12; logHelper.add(`代償としてストレスが${formatChange(8, "negative")}。`);
                 return true;
+            }
+        },
+        'omikuji': {
+            name: '開運おみくじ',
+            price: 400,
+            type: 'consumable_active',
+            description: '今日の運勢を占う。結果次第で合格運や精神状態が変化する。1日1回限定。',
+            use: (gameState, logHelper) => {
+                if (gameState.omikujiUsedToday) {
+                    logHelper.add("おみくじは本日既に引いています。また明日お試しください。");
+                    showThought("今日はもう引いたんだった…", 1800, 'neutral');
+                    return false; // アイテム使用失敗（既に使用済み）
+                }
+        
+                gameState.omikujiUsedToday = true; // 使用済みフラグを立てる
+        
+                const roll = Math.random() * 100;
+                let resultText = "";
+                let luckChange = 0;
+                let mentalChange = 0; // mentalChange を追加
+                let thoughtMessage = "";
+                let thoughtType = 'neutral';
+        
+                if (roll < 5) { // 5% 大吉
+                    resultText = "【大吉】";
+                    luckChange = getRandomInt(15, 25);
+                    mentalChange = getRandomInt(5, 10); // 大吉で精神力アップ
+                    thoughtMessage = "やったー！これはツイてる！最高の運勢だ！";
+                    thoughtType = 'success';
+                } else if (roll < 20) { // 15% 中吉
+                    resultText = "【中吉】";
+                    luckChange = getRandomInt(8, 14);
+                    mentalChange = getRandomInt(3, 7); // 中吉で精神力少しアップ
+                    thoughtMessage = "おお、中吉！なかなか良い感じ！";
+                    thoughtType = 'success';
+                } else if (roll < 50) { // 30% 小吉
+                    resultText = "【小吉】";
+                    luckChange = getRandomInt(3, 7);
+                    mentalChange = getRandomInt(1, 3); // 小吉で精神力ごくわずかにアップ
+                    thoughtMessage = "小吉か。まあまあかな。悪くはない。";
+                    thoughtType = 'neutral';
+                } else if (roll < 75) { // 25% 吉
+                    resultText = "【吉】";
+                    luckChange = getRandomInt(1, 2);
+                    mentalChange = 0; // 吉では精神力変動なし
+                    thoughtMessage = "吉。うん、平穏が一番だね。";
+                    thoughtType = 'neutral';
+                } else if (roll < 85) { // 10% 末吉
+                    resultText = "【末吉】";
+                    luckChange = 0;
+                    mentalChange = getRandomInt(-2, 0); // 末吉で精神力ごくわずかにダウンか変動なし
+                    thoughtMessage = "末吉…うーん、微妙だけど、悪いよりはマシかな。";
+                    thoughtType = 'neutral';
+                } else if (roll < 95) { // 10% 凶
+                    resultText = "【凶】";
+                    luckChange = getRandomInt(-7, -3);
+                    mentalChange = getRandomInt(-8, -4); // 凶で精神力ダウン
+                    thoughtMessage = "うわっ、凶が出た…。今日は慎重に行動しよう。";
+                    thoughtType = 'failure';
+                } else { // 5% 大凶
+                    resultText = "【大凶】";
+                    luckChange = getRandomInt(-15, -10);
+                    mentalChange = getRandomInt(-15, -10); // 大凶で精神力大幅ダウン
+                    thoughtMessage = "まさかの大凶…終わった…。今日はもう何も信じられない…！";
+                    thoughtType = 'failure';
+                }
+        
+                logHelper.add(`おみくじを引いた…結果は ${formatMessage(resultText, thoughtType)}だった！`);
+                if (luckChange !== 0) {
+                    gameState.luck += luckChange;
+                    logHelper.add(`合格運が ${formatChange(luckChange)}。`);
+                } else {
+                    logHelper.add(`合格運に変化はなかった。`);
+                }
+        
+                if (mentalChange !== 0) { // 精神力変動のログを追加
+                    gameState.mental += mentalChange;
+                    logHelper.add(`精神力が ${formatChange(mentalChange)}。`);
+                } else {
+                    logHelper.add(`精神力に変化はなかった。`);
+                }
+        
+                showThought(thoughtMessage, 2300, thoughtType);
+                return true; // アイテム使用成功
             }
         },
         'luxury_soapland': {
