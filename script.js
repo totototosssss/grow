@@ -10,7 +10,9 @@ document.addEventListener('DOMContentLoaded', () => {
         logMessage: 'しろちゃんの予備試験への道が始まる…。合格は絶望的だ。',
         inventory: [],
         permanentBuffs: {},
-        activeEffects: {}
+        activeEffects: {},
+        insultOnlineCount: 0,
+        pachinkoCount: 0
     };
 
     const ITEMS = {
@@ -80,15 +82,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         },
         {
-            name: "にゃまからの暴言",
-            message: "突然、にゃまが現れて心無い言葉を浴びせられた…心が折れそうだ。",
-            effect: (gs) => {
-                gs.knowledge = Math.round(gs.knowledge * 0.4); gs.stress = Math.min(100, gs.stress + 40);
-                gs.energy = Math.round(gs.energy * 0.4); gs.focus = Math.round(gs.focus * 0.35);
-                gs.mental = Math.round(gs.mental * 0.4); gs.luck = Math.max(0, gs.luck - 15);
-            }
-        },
-        {
             name: "親に見られたくない場面",
             message: "自室で㊙️㊙️していたら、親に一番見られたくない場面を目撃されてしまった…最悪だ。",
             effect: (gs) => {
@@ -124,20 +117,20 @@ document.addEventListener('DOMContentLoaded', () => {
         {
             name: "有名な学者の解説動画を発見！",
             message: "ネットで有名な学者の予備試験対策動画を偶然見つけた！これは役立ちそうだ！",
-            effect: (gs) => { gs.knowledge += getRandomInt(1,4); gs.focus += getRandomInt(3,8); gs.stress -= 3;}
+            effect: (gs) => { gs.knowledge += getRandomInt(1,3); gs.focus += getRandomInt(4,9); gs.stress -= 4;}
         },
         {
             name: "模試の成績が悪く落ち込む…",
             message: "先日受けた模試の結果が返ってきた。E判定…もうダメかもしれない…。",
-            effect: (gs) => { gs.mental -= getRandomInt(18,28); gs.stress += getRandomInt(22,33); gs.focus -= getRandomInt(12,18); gs.knowledge -=getRandomInt(0,1);}
+            effect: (gs) => { gs.mental -= getRandomInt(20,30); gs.stress += getRandomInt(25,35); gs.focus -= getRandomInt(14,20); gs.knowledge -=getRandomInt(0,1);}
         },
         {
             name: "択一の基準点上昇の噂",
             message: "SNSで「今年の択一基準点は大幅上昇する」というデマが流れているのを見てしまった…。不安だ。",
-            effect: (gs) => { gs.stress += getRandomInt(12,22); gs.focus -= getRandomInt(7,12); gs.mental -=getRandomInt(4,9);}
+            effect: (gs) => { gs.stress += getRandomInt(15,25); gs.focus -= getRandomInt(8,14); gs.mental -=getRandomInt(5,10);}
         }
     ];
-    const RANDOM_EVENT_CHANCE = 0.13;
+    const RANDOM_EVENT_CHANCE = 0.07;
 
     let gameState = JSON.parse(JSON.stringify(INITIAL_STATE));
 
@@ -149,7 +142,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const focusDisplay = document.getElementById('focus-display');
     const mentalDisplay = document.getElementById('mental-display');
     const luckDisplay = document.getElementById('luck-display');
-    const rhythmDisplay = document.getElementById('rhythm-display');
 
     const shiroImageElem = document.getElementById('shiro-image');
     const shiroThoughtBubble = document.getElementById('shiro-thought-bubble');
@@ -164,7 +156,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const examCalcMsg = document.getElementById('exam-calculation-message');
     const examActualResult = document.getElementById('exam-actual-result');
     const fictionEndingElem = document.getElementById('fiction-ending');
-    const fictionNoticeElem = fictionEndingElem.querySelector('.fiction-notice');
+    const fictionNoticeElem = fictionEndingElem.querySelector('.fiction-notice-body');
     const examResultTitle = document.getElementById('exam-result-title');
     const examResultMesssage = document.getElementById('exam-result-message');
     const restartGameButton = document.getElementById('restart-game-button');
@@ -222,7 +214,7 @@ document.addEventListener('DOMContentLoaded', () => {
         Object.keys(gameState).forEach(key => {
             if (['knowledge', 'stress', 'energy', 'focus', 'mental', 'luck'].includes(key)) {
                 let maxVal = 100;
-                if (key === 'knowledge') maxVal = 150; // Max knowledge very low
+                if (key === 'knowledge') maxVal = 150;
                 if (key === 'energy' && gameState.permanentBuffs.maxEnergyBoost) maxVal += gameState.permanentBuffs.maxEnergyBoost;
                 gameState[key] = clamp(gameState[key], 0, maxVal);
             }
@@ -236,10 +228,9 @@ document.addEventListener('DOMContentLoaded', () => {
             knowledge: knowledgeDisplay, stress: stressDisplay, energy: energyDisplay,
             focus: focusDisplay, mental: mentalDisplay, luck: luckDisplay
         };
-        if(rhythmDisplay) paramsToUpdate.rhythm = rhythmDisplay; // If rhythm exists (it doesn't now)
 
         for (const key in paramsToUpdate) {
-            if (paramsToUpdate[key]) { // Check if element exists
+            if (paramsToUpdate[key]) {
                 const displayElement = paramsToUpdate[key];
                 const currentValue = parseFloat(displayElement.textContent);
                 const newValue = Math.round(gameState[key]);
@@ -251,7 +242,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 displayElement.textContent = newValue;
             }
         }
-
 
         shiroImageElem.src = gameState.shiroImage;
         logMessageDisplay.innerHTML = gameState.logMessage;
@@ -336,7 +326,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (itemDef.type === 'permanent') {
             if (itemDef.permanentEffect) {
                 for (const effectKey in itemDef.permanentEffect) {
-                    if (effectKey === 'luck') { // Direct stat buffs should be applied directly to gameState
+                    if (effectKey === 'luck') {
                         gameState.luck = Math.min(100, gameState.luck + itemDef.permanentEffect.luck);
                     } else {
                         gameState.permanentBuffs[effectKey] = (gameState.permanentBuffs[effectKey] || 0) + itemDef.permanentEffect[effectKey];
@@ -451,7 +441,6 @@ document.addEventListener('DOMContentLoaded', () => {
             LogHelper.addRaw(`<hr><strong>ランダムイベント: ${event.name}</strong><br>${event.message}`);
             showThought(`「${event.name}」発生！`, 2800, 'neutral');
             setTimeout(() => {
-                // Let it be visible until next log update
             }, 4500);
             return true;
         }
@@ -461,7 +450,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function calculateChange(base, positiveFactors = [], negativeFactors = [], baseMultiplier = 1.0, isEnergyCostCalculation = false) {
         let multiplier = baseMultiplier;
         if (isEnergyCostCalculation && gameState.permanentBuffs.energyConsumptionModifier) {
-            multiplier *= (1 + gameState.permanentBuffs.energyConsumptionModifier); // Modifier is negative, so this reduces cost
+            multiplier *= (1 + gameState.permanentBuffs.energyConsumptionModifier);
         }
 
         positiveFactors.forEach(f => multiplier *= (1 + f.value * (f.paramState / 100)));
@@ -477,20 +466,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function studyTextbook() {
         LogHelper.add("<strong><i class='fas fa-book-open'></i> 基本書を読み込み、必死に知識を詰め込んだ。</strong>");
-        let knowledgeGainBase = getRandom(2, 4); // Extremely low base gain
+        let knowledgeGainBase = getRandom(1, 3); 
         
         let knowledgeMultiplier = 1.0;
-        if (gameState.permanentBuffs.knowledgeBoostMultiplier) { // This is for Sランク過去問集, not基本書
-            // This buff is for 'do_exercise'. We need a different one for textbooks or adjust logic
-        }
         if (gameState.activeEffects.studyTextbookBoost && gameState.activeEffects.studyTextbookBoost.duration > 0) {
             knowledgeMultiplier *= gameState.activeEffects.studyTextbookBoost.value;
             LogHelper.add(`${formatMessage(gameState.activeEffects.studyTextbookBoost.displayName, "item")}により、学習効率が上がっている！`);
         }
 
-
         let kGain = calculateChange(knowledgeGainBase,
-            [{paramState: gameState.focus, value: 0.85}, {paramState: gameState.mental, value: 0.25}], // Mental state less important than focus for raw input
+            [{paramState: gameState.focus, value: 0.85}, {paramState: gameState.mental, value: 0.25}],
             [{paramState: gameState.stress, value: 0.85}, {paramState: 100 - gameState.energy, value: 0.75}],
             knowledgeMultiplier
         );
@@ -508,13 +493,13 @@ document.addEventListener('DOMContentLoaded', () => {
         gameState.focus -= Math.round(focusDrain);
         gameState.mental -= getRandomInt(4,8);
 
-        if(gameState.energy < 10) showThought("もう…無理だ…", 1800, 'failure');
+        if(gameState.energy < 10) showThought("もう限界だ…何も考えられない。", 1800, 'failure');
         else if(gameState.focus < 5) showThought("目がかすむ…", 1800, 'failure');
     }
     
     function doExercise(){
         LogHelper.add("<strong><i class='fas fa-pencil-ruler'></i> 過去問・演習書と格闘した。</strong>");
-        let knowledgeGainBase = getRandom(1, 3); // Lower base than textbook, but applies differently
+        let knowledgeGainBase = getRandom(1, 2); 
         
         let knowledgeMultiplier = 1.0;
         if (gameState.permanentBuffs.exerciseKnowledgeBoost) {
@@ -525,49 +510,47 @@ document.addEventListener('DOMContentLoaded', () => {
             LogHelper.add(`${formatMessage(gameState.activeEffects.studyExerciseBoost.displayName, "item")}により、演習効率が上がっている！`);
         }
 
-
         let kGain = calculateChange(knowledgeGainBase,
-            [{paramState: gameState.focus, value: 0.9}, {paramState: gameState.knowledge, value: 0.15}], // Existing knowledge helps a bit
-            [{paramState: gameState.stress, value: 0.7}, {paramState: 100 - gameState.energy, value: 0.7}],
+            [{paramState: gameState.focus, value: 0.9}, {paramState: gameState.knowledge, value: 0.10}], 
+            [{paramState: gameState.stress, value: 0.75}, {paramState: 100 - gameState.energy, value: 0.75}],
             knowledgeMultiplier
         );
         kGain = Math.max(0, Math.round(kGain));
         gameState.knowledge += kGain;
         LogHelper.add(kGain > 0 ? `実践的な法律知識が${formatChange(kGain)}向上した。` : `問題が全く解けず、何も得られなかった…。`);
 
-        let focusConsumption = getRandomInt(25, 38);
+        let focusConsumption = getRandomInt(28, 40);
         if (gameState.permanentBuffs.exerciseFocusSave) {
             focusConsumption *= (1 - gameState.permanentBuffs.exerciseFocusSave);
         }
         gameState.focus -= Math.round(focusConsumption);
-        gameState.energy -= Math.round(calculateChange(35, [], [], 1.0, true));
-        gameState.stress += Math.round(calculateChange(18, [{paramState: 100 - gameState.mental, value: 0.5}]));
-        gameState.mental -= getRandomInt(5,10);
+        gameState.energy -= Math.round(calculateChange(38, [], [], 1.0, true));
+        gameState.stress += Math.round(calculateChange(20, [{paramState: 100 - gameState.mental, value: 0.55}]));
+        gameState.mental -= getRandomInt(6,12);
 
         if(gameState.focus < 5) showThought("頭が完全に停止した…", 1800, 'failure');
     }
-
 
     function work() {
         LogHelper.add("<strong><i class='fas fa-briefcase'></i> 生活費のため、短期バイトに励んだ。</strong>");
         if (gameState.energy < 45) {
             LogHelper.add(formatMessage("疲労が酷く、ほとんど仕事にならなかった…。", "negative"));
             showThought("体が…重い…", 1800, 'failure');
-            gameState.money += getRandomInt(150, 400);
-            gameState.energy -= getRandomInt(35, 45);
+            gameState.money += getRandomInt(150, 350);
+            gameState.energy -= getRandomInt(38, 48);
         } else {
-            let earningsBase = getRandom(900, 1700);
-            let earnings = calculateChange(earningsBase, [{paramState: gameState.focus, value:0.04}]); // Rhythm removed
+            let earningsBase = getRandom(800, 1500);
+            let earnings = calculateChange(earningsBase, [{paramState: gameState.focus, value:0.03}]);
             earnings = Math.round(earnings);
 
             gameState.money += earnings;
             LogHelper.add(`働いて ${formatMessage("+" + earnings, "positive")}円の活動資金を得た。`);
             showThought("これで少しはマシになるか…。", 1800, 'neutral');
         }
-        gameState.energy -= Math.round(calculateChange(50, [], [], 1.0, true));
-        gameState.stress += getRandomInt(12, 22);
-        gameState.focus -= getRandomInt(10,16);
-        gameState.mental -= getRandomInt(1,3); // Work can be mentally draining
+        gameState.energy -= Math.round(calculateChange(55, [], [], 1.0, true));
+        gameState.stress += getRandomInt(14, 24);
+        gameState.focus -= getRandomInt(12,18);
+        gameState.mental -= getRandomInt(2,4);
     }
     
     function playVideoGames() {
@@ -577,84 +560,85 @@ document.addEventListener('DOMContentLoaded', () => {
             gameState.energy -= 12;
             showThought("ただただ虚無感が募る…。", 1800, 'failure');
         } else {
-            let stressRelief = getRandom(10, 20);
-            stressRelief *= (1 + (gameState.mental / 300));
+            let stressRelief = getRandom(8, 18);
+            stressRelief *= (1 + (gameState.mental / 350));
 
             gameState.stress -= Math.round(stressRelief);
             LogHelper.add(`勉強ストレスが${formatChange(-Math.round(stressRelief))}！一瞬だけ現実を忘れられた。`);
 
-            gameState.energy -= Math.round(calculateChange(30, [], [], 1.0, true));
-            gameState.focus -= getRandomInt(10, 18);
-            gameState.knowledge -= getRandomInt(1, 5);
-            gameState.mental += getRandomInt(0,2);
+            gameState.energy -= Math.round(calculateChange(32, [], [], 1.0, true));
+            gameState.focus -= getRandomInt(12, 20);
+            gameState.knowledge -= getRandomInt(2, 5);
+            gameState.mental += getRandomInt(0,1);
             showThought("これで良かったのだろうか…。", 2000, 'neutral');
         }
     }
 
     function insultOnline() {
-        LogHelper.add("<strong><i class='fas fa-comments'></i> 匿名掲示板に日頃の鬱憤を書き込んだ。</strong>");
+        gameState.insultOnlineCount++;
+        LogHelper.add("<strong><i class='fas fa-comments-dollar'></i> オプチャで他人を激しく罵倒した。</strong>");
         const targets = ["にゃま", "なんく", "ささみ"];
         const target = targets[getRandomInt(0, targets.length - 1)];
         
-        gameState.energy -= getRandomInt(5,12);
-        // Focus and rhythm removed as direct results, indirect via other params
+        gameState.energy -= getRandomInt(6,14);
 
-        if (Math.random() < 0.5) { // Success
+        if (Math.random() < 0.5) {
             let stressRelief = getRandom(30, 50);
             gameState.stress -= Math.round(stressRelief);
-            let mentalBoost = getRandomInt(5, 10); // Temporary euphoria
+            let mentalBoost = getRandomInt(6, 12);
             gameState.mental += mentalBoost;
             let focusBoost = getRandomInt(4, 9);
             gameState.focus += focusBoost;
-            gameState.luck -= getRandomInt(15, 22);
+            gameState.luck -= getRandomInt(18, 28);
 
             LogHelper.add(`オプチャで${target}を完膚なきまでに言い負かした！気分爽快だ！勉強ストレスが${formatChange(-Math.round(stressRelief))}、精神力が${formatChange(mentalBoost)}、集中力が${formatChange(focusBoost)}。`);
-            LogHelper.add(`しかし、このような行為は合格運を著しく下げるだろう(${formatChange(getRandomInt(-22,-15), "negative")})。`);
+            LogHelper.add(`しかし、このような行為は合格運を著しく下げるだろう(${formatChange(getRandomInt(-28,-18), "negative")})。`);
             showThought("一瞬だけスッキリした…！", 2000, 'success');
-        } else { // Failure
-            let stressIncrease = getRandomInt(18, 28);
+        } else {
+            let stressIncrease = getRandomInt(20, 30);
             gameState.stress += stressIncrease;
-            let mentalDamage = getRandomInt(22, 32);
+            let mentalDamage = getRandomInt(25, 35);
             gameState.mental -= mentalDamage;
-            gameState.luck -= getRandomInt(8,14);
-            gameState.focus -= getRandomInt(10,18);
+            gameState.luck -= getRandomInt(10,16);
+            gameState.focus -= getRandomInt(12,20);
 
             LogHelper.add(`オプチャで${target}への悪態は不発に終わり、逆に言い返されてしまった…。勉強ストレスが${formatChange(stressIncrease,"negative")}、精神力が${formatChange(-mentalDamage,"negative")}。`);
-            LogHelper.add(`集中力も散漫になり(${formatChange(getRandomInt(-18,-10),"negative")})、合格運も下がった(${formatChange(getRandomInt(-14,-8),"negative")})。`);
+            LogHelper.add(`集中力も散漫になり(${formatChange(getRandomInt(-20,-12),"negative")})、合格運も下がった(${formatChange(getRandomInt(-16,-10),"negative")})。`);
             showThought("最悪だ…余計に疲れた…。", 2200, 'failure');
         }
     }
     
     function pachinko() {
-        LogHelper.add("<strong><i class='fas fa-dice-five'></i> 誘惑に負け、娯楽に手を出してしまった…。</strong>");
-        let cost = Math.min(gameState.money, Math.max(1000, Math.round(gameState.money * 0.20))); // Higher % of money, min 1000
+        gameState.pachinkoCount++;
+        LogHelper.add("<strong><i class='fas fa-dice-five'></i> 誘惑に負け、パチンコに手を出してしまった…。</strong>");
+        let cost = Math.min(gameState.money, Math.max(1000, Math.round(gameState.money * 0.20)));
 
-        if (gameState.money < 1000) { // Absolute minimum to play
+        if (gameState.money < 1000) {
             LogHelper.add(formatMessage("活動資金が1000円未満では、遊ぶことすら許されない。", "negative"));
             showThought("娯楽は金持ちの道楽か…。", 1800, 'failure');
-            gameState.stress += 7;
+            gameState.stress += 8;
         } else {
             gameState.money -= cost;
             LogHelper.add(`${cost}円を握りしめ、一攫千金を夢見た。`);
-            gameState.energy -= Math.round(calculateChange(22, [], [], 1.0, true));
+            gameState.energy -= Math.round(calculateChange(25, [], [], 1.0, true));
             
-            let winChance = 0.18 + (gameState.luck / 400) - (gameState.stress / 500) + (gameState.mental / 600);
-            winChance = clamp(winChance, 0.02, 0.35); // Extremely low win chance
+            let winChance = 0.15 + (gameState.luck / 450) - (gameState.stress / 550) + (gameState.mental / 650);
+            winChance = clamp(winChance, 0.01, 0.30);
 
             if (Math.random() < winChance) {
-                const winningsMultiplier = getRandom(1.4, 2.3);
+                const winningsMultiplier = getRandom(1.3, 2.1);
                 const winnings = Math.round(cost * winningsMultiplier);
                 gameState.money += winnings;
                 LogHelper.add(`信じられない幸運！ ${formatMessage("+" + winnings, "positive")}円獲得！`);
                 gameState.stress -= getRandomInt(15, 25);
-                gameState.mental += getRandomInt(8, 14);
-                gameState.luck += getRandomInt(2,4);
+                gameState.mental += getRandomInt(7, 13);
+                gameState.luck += getRandomInt(1,2);
                 showThought("今日だけはツイてる！", 1800, 'success');
             } else {
-                LogHelper.add(formatMessage("現実は非情…参加費は泡と消えた。", "negative"));
-                gameState.stress += getRandomInt(20, 30);
-                gameState.mental -= getRandomInt(14, 20);
-                gameState.luck -= getRandomInt(3,6);
+                LogHelper.add(formatMessage("やはり現実は厳しかった…参加費を全て失った。", "negative"));
+                gameState.stress += getRandomInt(22, 32);
+                gameState.mental -= getRandomInt(15, 22);
+                gameState.luck -= getRandomInt(3,7);
                 showThought("時間と活動資金の無駄だった…。", 2000, 'failure');
             }
         }
@@ -663,18 +647,18 @@ document.addEventListener('DOMContentLoaded', () => {
     function sleep() {
         LogHelper.add("<strong><i class='fas fa-bed'></i> 翌日のために、質の高い睡眠を心がけた。</strong>");
         let energyGainBase = getRandom(25, 50);
-        let energyGain = calculateChange(energyGainBase, [{paramState: (100-gameState.stress), value: 0.15}], [{paramState: gameState.stress, value: 0.5}]); // Less stress helps sleep
+        let energyGain = calculateChange(energyGainBase, [{paramState: (100-gameState.stress), value: 0.12}], [{paramState: gameState.stress, value: 0.55}]);
         
-        let stressReliefBase = getRandom(7, 18);
-        let stressRelief = calculateChange(stressReliefBase, [{paramState: gameState.mental, value: 0.5}]); // Higher mental, better stress relief from sleep
+        let stressReliefBase = getRandom(6, 16);
+        let stressRelief = calculateChange(stressReliefBase, [{paramState: gameState.mental, value: 0.45}]);
 
         gameState.energy += Math.round(energyGain);
         gameState.stress -= Math.round(stressRelief);
         LogHelper.add(`体力が回復し(${formatChange(energyGain)})、勉強ストレスも軽減された(${formatChange(-stressRelief)})。`);
 
-        let rhythmLikeEffectOnFocusMental = gameState.permanentBuffs.rhythmImprovementBoost || 1.0; // Use this for sleep quality
-        gameState.focus = Math.max(15, gameState.focus + Math.round(getRandomInt(2,8) * rhythmLikeEffectOnFocusMental));
-        gameState.mental = Math.min(100, gameState.mental + Math.round(getRandomInt(1,4) * rhythmLikeEffectOnFocusMental));
+        let rhythmLikeEffectOnFocusMental = (gameState.permanentBuffs.rhythmImprovementBoost || 1.0) * getRandomInt(1, 5); // rhythm param removed
+        gameState.focus = Math.max(15, gameState.focus + Math.round(rhythmLikeEffectOnFocusMental * 0.8));
+        gameState.mental = Math.min(100, gameState.mental + Math.round(rhythmLikeEffectOnFocusMental * 0.5));
         
         showThought("少しは回復しただろうか…。", 1800, 'neutral');
     }
@@ -686,16 +670,16 @@ document.addEventListener('DOMContentLoaded', () => {
         applyActiveEffectsEndOfDay();
 
         let dailyStressMod = gameState.permanentBuffs.dailyStressResist || 0;
-        gameState.stress += getRandomInt(3, 6) - dailyStressMod; // Higher base daily stress
-        gameState.mental -= getRandomInt(1,4);
-        gameState.energy -= getRandomInt(1,3); // Naturally get tired
-        gameState.focus -= getRandomInt(2,5); // Naturally lose focus
+        gameState.stress += getRandomInt(3, 7) - dailyStressMod;
+        gameState.mental -= getRandomInt(2,5);
+        gameState.energy -= getRandomInt(2,4);
+        gameState.focus -= getRandomInt(3,6);
         
         if(gameState.permanentBuffs.dailyLuckIncrease) {
             gameState.luck += gameState.permanentBuffs.dailyLuckIncrease;
             LogHelper.addRaw(`<br>${formatMessage("お守り","item")}から微かな加護を感じる(合格運${formatChange(gameState.permanentBuffs.dailyLuckIncrease, "positive")})。`);
         } else {
-            gameState.luck += getRandomInt(-3,0); // Luck usually decreases or stays
+            gameState.luck += getRandomInt(-4,-1); // Luck significantly decreases
         }
         
         let dailySummaryPrepend = "";
@@ -735,35 +719,38 @@ document.addEventListener('DOMContentLoaded', () => {
         updateUI();
 
         setTimeout(() => {
-            let internalScore = gameState.knowledge * 2.5;
-            internalScore += gameState.mental * 1.1;
-            internalScore += gameState.focus * 0.9;
-            internalScore += gameState.luck * 0.6;
-            internalScore -= gameState.stress * 1.4;
-            internalScore += gameState.energy * 0.3;
+            let internalScore = gameState.knowledge * 2.6;
+            internalScore += gameState.mental * 1.2;
+            internalScore += gameState.focus * 1.0;
+            internalScore += gameState.luck * 0.7;
+            internalScore -= gameState.stress * 1.5;
+            internalScore += gameState.energy * 0.35;
 
             internalScore = Math.max(0, Math.round(internalScore));
-            const passThreshold = 220; // Extremely high, very hard to reach
+            const passThreshold = 230;
 
             let resultMessageText = "";
             let resultTitleText = "";
             let passed = false;
 
-            if (internalScore >= passThreshold) { // Base requirement met, now for luck
-                if (gameState.luck > 90 && gameState.mental > 85 && internalScore > passThreshold * 1.01) {
-                    passed = true; // Destined by extreme stars
-                } else if (internalScore > passThreshold * 1.03 && (gameState.luck > 70 || gameState.mental > 75) && Math.random() < 0.7) {
-                    passed = true; // High stats, good roll
-                } else if (Math.random() < (0.15 + (gameState.luck - 75) / 150 + (gameState.mental - 75)/200) ) { // Very low base, needs very high luck/mental
+            if (internalScore >= passThreshold) {
+                if (gameState.luck > 90 && gameState.mental > 88 && internalScore > passThreshold * 1.01) {
+                    passed = true;
+                } else if (internalScore > passThreshold * 1.02 && (gameState.luck > 70 || gameState.mental > 78) && Math.random() < 0.6) {
+                    passed = true;
+                } else if (Math.random() < (0.10 + (gameState.luck - 80) / 150 + (gameState.mental - 80)/200) ) {
                     passed = true;
                 }
-            } else { // Below threshold, needs an absolute miracle
-                 if (internalScore > passThreshold * 0.95 && gameState.luck > 95 && gameState.mental > 90 && Math.random() < 0.1) { // Insane luck
+            } else {
+                 if (internalScore > passThreshold * 0.93 && gameState.luck > 96 && gameState.mental > 92 && Math.random() < 0.05) {
                     passed = true;
                  } else {
                     passed = false;
                  }
             }
+
+            examShiroImageElem.src = passed ? (gameState.shiroHappyImage || INITIAL_STATE.shiroImage) : (gameState.shiroSadImage || INITIAL_STATE.shiroImage);
+            examResultTitle.style.color = passed ? 'var(--success-color)' : 'var(--danger-color)';
 
             if (passed) {
                 resultTitleText = "予備試験 合格！";
@@ -772,22 +759,27 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else {
                     resultMessageText = `<strong>おめでとうございます！血と汗と涙、そして僅かな幸運の全てが実り、見事予備試験に合格です！</strong><br>想像を絶する厳しい道のりの果てに、ついに栄光を掴みました。<br>しろちゃんの未来に、ようやく確かな光が射しました！`;
                 }
-                examShiroImageElem.src = gameState.shiroHappyImage || INITIAL_STATE.shiroImage;
-                examResultTitle.style.color = 'var(--success-color)';
-                fictionNoticeElem.innerHTML = `―――だが、これはあくまでゲームの中のしろちゃんの輝かしい未来。<br>現実世界のしろちゃんは、この瞬間も自室のベッドの上で<br>「もう何もしたくない…」と呟きながら、怠惰な時間を満喫しているのであった…！<br>めでたし、めでたし？ (この物語はフィクションです)`;
+                fictionNoticeElem.innerHTML = `―――だが、これはあくまでゲームの中のしろちゃんの輝かしい未来。<br>現実世界のしろちゃんは、この瞬間も自室のベッドの上で<br>「もう何もしたくない…」と呟きながら、怠惰な時間を満喫しているのであった…！<br>めでたし、めでたし？`;
                 fictionEndingElem.style.display = 'block';
-
             } else {
-                resultTitleText = "予備試験 不合格…";
-                 if (internalScore < passThreshold * 0.55) {
-                     resultMessageText = `<strong>残念ながら、夢は完全に潰えました…。</strong><br>あまりにも過酷な現実は、しろちゃんの心を無慈悲に打ち砕きました。この絶望から立ち直ることはできるのでしょうか…。`;
-                } else if (internalScore < passThreshold * 0.88) {
-                    resultMessageText = `<strong>あと一歩、本当にあと一歩のところで、力尽きました。不合格です。</strong><br>これ以上ないほど悔しい結果です。しかし、この壮絶な挑戦で何かを掴んだと信じたい…。`;
+                if (gameState.insultOnlineCount >= 3) {
+                    resultTitleText = "予備試験 不合格…そして逮捕";
+                    resultMessageText = `<strong>予備試験にも落ち、度重なるネットでの誹謗中傷が仇となった…。</strong><br>ある日、玄関のチャイムが鳴り、ドアを開けるとそこには警察官が立っていた。<br>「しろちゃん、ちょっと署まで来てもらおうか」…人生、詰んだ。`;
+                    examShiroImageElem.src = gameState.shiroSadImage || INITIAL_STATE.shiroImage; // Or a specific "arrested" image
+                } else if (gameState.pachinkoCount >= 3) {
+                     resultTitleText = "予備試験 不合格…そして借金地獄";
+                     resultMessageText = `<strong>予備試験にも落ち、パチンコで作った借金は雪だるま式に膨れ上がった。</strong><br>取り立ての電話は鳴り止まず、もはやまともな生活は送れない。<br>しろちゃんの人生は、ギャンブルによって完全に破綻した…。`;
+                     examShiroImageElem.src = gameState.shiroSadImage || INITIAL_STATE.shiroImage; // Or a specific "bankrupt" image
                 } else {
-                    resultMessageText = `<strong>本当に、本当に、あと僅かの差で不合格となりました…。</strong><br>天はしろちゃんに味方しませんでした。合格の光は、指の間からこぼれ落ちてしまいました。`;
+                    resultTitleText = "予備試験 不合格…";
+                    if (internalScore < passThreshold * 0.6) {
+                         resultMessageText = `<strong>残念ながら、夢は完全に潰えました…。</strong><br>あまりにも厳しい現実は、無情にもしろちゃんを打ちのめしました。この絶望から立ち直ることはできるのでしょうか…。`;
+                    } else if (internalScore < passThreshold * 0.88) {
+                        resultMessageText = `<strong>あと一歩、本当にあと一歩でしたが、不合格です。</strong><br>これ以上ないほど悔しい結果です。しかし、この壮絶な挑戦で何かを掴んだと信じたい…。`;
+                    } else {
+                        resultMessageText = `<strong>本当に、本当に、あと僅かの差で不合格となりました…。</strong><br>天はしろちゃんに味方しませんでした。合格の光は、指の間からこぼれ落ちてしまいました。`;
+                    }
                 }
-                examShiroImageElem.src = gameState.shiroSadImage || INITIAL_STATE.shiroImage;
-                examResultTitle.style.color = 'var(--danger-color)';
                 fictionEndingElem.style.display = 'none';
             }
 
@@ -840,7 +832,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function resetGame() {
-        gameState = JSON.parse(JSON.stringify(INITIAL_STATE));
+        gameState = JSON.parse(JSON.stringify(INITIAL_STATE)); // Deep copy
+        gameState.insultOnlineCount = 0; // Ensure counters are reset
+        gameState.pachinkoCount = 0;
         shiroImageElem.src = gameState.shiroImage;
         eventNotificationArea.style.display = 'none';
         examResultModal.classList.remove('show');
