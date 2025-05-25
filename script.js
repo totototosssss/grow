@@ -682,7 +682,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function sleep() {
         LogHelper.add("<strong><i class='fas fa-bed'></i> 翌日のために、質の高い睡眠を心がけた。</strong>");
-        let energyGainBase = getRandom(25, 50);
+        let energyGainBase = getRandom(28, 60);
         let energyGain = calculateChange(energyGainBase, [{paramState: (100-gameState.stress), value: 0.12}], [{paramState: gameState.stress, value: 0.55}]);
         
         let stressReliefBase = getRandom(6, 16);
