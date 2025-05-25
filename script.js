@@ -184,7 +184,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const RANDOM_EVENTS = [
         {
             name: "オプチャで大炎上",
-            message: "不用意な発言がオプチャで拡散し大炎上！精神的に大ダメージ…もう何もしたくない。",
+            message: "差別的な発言がオプチャで拡散し大炎上！精神的に大ダメージ…もう何もしたくない。",
             effect: (gs) => {
                 gs.knowledge = Math.round(gs.knowledge * 0.6); gs.stress = Math.min(100, gs.stress + 50);
                 gs.energy = Math.round(gs.energy * 0.5); gs.focus = Math.round(gs.focus * 0.4);
