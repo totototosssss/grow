@@ -127,7 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
  
                 gameState.money -= 10000;
-                LogHelper.add(`最高級のサービスには追加料金が必要だった…。活動資金がさらに減少。`);
+                logHelper.add(`最高級のサービスには追加料金が必要だった…。活動資金がさらに減少。`);
 
 
                 showThought("全てを忘れてリフレッシュした…！", 2500, 'success'); 
